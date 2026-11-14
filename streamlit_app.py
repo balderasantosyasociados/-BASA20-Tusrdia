@@ -343,11 +343,11 @@ menu_opciones = [
     "🛡️ 6. Panel Admin"
 ]
 
-menu_seleccionado = st.selectbox("Seleccione la Fase Operativa", menu_opciones, index=menu_opciones.index(st.session_state.paso_actual) if st.session_state.paso_actual in menu_opciones else 0)
+menu = st.selectbox("Seleccione la Fase Operativa", menu_opciones, index=menu_opciones.index(st.session_state.paso_actual) if st.session_state.paso_actual in menu_opciones else 0)
 
-if menu_seleccionado != st.session_state.paso_actual:
-    registrar_historico("Navegación", f"Cambio de sección a {menu_seleccionado}")
-    st.session_state.paso_actual = menu_seleccionado
+if menu != st.session_state.paso_actual:
+    registrar_historico("Navegación", f"Cambio de sección a {menu}")
+    st.session_state.paso_actual = menu
 
 st.divider()
 
