@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Pro - UI Luminosa Profesional (Forzada en Blanco Hueso y Letras Negras)
+# Versión 10/10 Pro - UI Luminosa Profesional con Tarjetas de Título Modernas
 
 import streamlit as st
 import hashlib
@@ -17,58 +17,84 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILO VISUAL BLANCO HUESO Y LETRAS NEGRAS (FORZADO PROFESIONAL) ---
+# --- ESTILO VISUAL PROFESIONAL: TARJETAS DE TÍTULO, FONDOS LIMPIOS Y CONTRASTE PERFECTO ---
 st.markdown("""
 <style>
-/* Forzar fondo blanco hueso y evitar inversión por modo oscuro del celular */
+/* Fondo general de la aplicación en blanco hueso elegante */
 .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"], [data-testid="stToolbar"] {
     background-color: #FAF9F6 !important;
     color: #111111 !important;
 }
 
-/* Forzar color negro/gris oscuro para títulos, textos y etiquetas */
-h1, h2, h3, h4, h5, h6, p, span, label, div {
-    color: #111111 !important;
+/* Tipografía general y títulos limpios */
+h1, h2, h3, h4, h5, h6 {
+    color: #0F172A !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.025em;
 }
 
-/* Etiquetas de formularios en negro impecable */
+/* Tarjetas de Título Modernas y Elegantes */
+.title-card {
+    background: #FFFFFF;
+    padding: 20px 24px;
+    border-radius: 14px;
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    margin-bottom: 20px;
+}
+
+.title-card h2 {
+    margin: 0 0 5px 0;
+    color: #0F172A !important;
+    font-size: 1.5rem;
+}
+
+.title-card p {
+    margin: 0;
+    color: #64748B !important;
+    font-size: 0.95rem;
+}
+
+/* Etiquetas de formularios */
 .stTextInput label, .stSelectbox label, .stNumberInput label, .stFileUploader label, .stRadio label, .stCheckbox label, .stDateInput label {
-    color: #111111 !important;
+    color: #1E293B !important;
     font-weight: 600 !important;
 }
 
-/* Cajas de texto y selectores modernos con fondo blanco puro y letras negras */
+/* Cajas de texto y selectores */
 .stTextInput>div>div>input, .stSelectbox>div>div>select, .stNumberInput>div>div>input {
     background-color: #FFFFFF !important;
     color: #111111 !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     border: 1px solid #CBD5E1 !important;
 }
 
-/* Contenedores de selectbox y dropdowns */
 [data-baseweb="select"] > div {
     background-color: #FFFFFF !important;
     color: #111111 !important;
     border-color: #CBD5E1 !important;
 }
 
-/* Ayudas visuales */
+/* Cajas de ayuda / info */
 .mini-help {
-    background-color: #F1F5F9 !important;
-    color: #1E293B !important;
-    padding: 10px 14px;
-    border-radius: 8px;
+    background-color: #F8FAFC !important;
+    color: #334155 !important;
+    padding: 12px 16px;
+    border-radius: 10px;
     font-size: 13px;
     margin-top: -5px;
     margin-bottom: 15px;
     border-left: 4px solid #2563EB;
+    border-top: 1px solid #E2E8F0;
+    border-right: 1px solid #E2E8F0;
+    border-bottom: 1px solid #E2E8F0;
 }
 
-/* Botones principales ejecutivos */
+/* Botones principales ejecutivos con texto blanco garantizado */
 .stButton>button {
     background-color: #0F172A !important;
     color: #FFFFFF !important;
-    border-radius: 8px !important;
+    border-radius: 10px !important;
     font-weight: 600 !important;
     width: 100%;
     height: 48px;
@@ -76,9 +102,19 @@ h1, h2, h3, h4, h5, h6, p, span, label, div {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: all 0.2s ease;
 }
+
 .stButton>button:hover {
     background-color: #1E293B !important;
     color: #FFFFFF !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Contenedores de información (st.info) con diseño limpio */
+.stAlert {
+    background-color: #EFF6FF !important;
+    color: #1E3A8A !important;
+    border: 1px solid #BFDBFE !important;
+    border-radius: 10px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -214,7 +250,7 @@ custom_titulo = st.sidebar.text_input("Título Principal", value="BASA20 - Tusrd
 custom_subtitulo = st.sidebar.text_input("Subtítulo Institucional", value="Baldera Santos y Asociados, SRL | Cumplimiento y Gobernanza")
 custom_soporte = st.sidebar.text_input("Correo de Soporte", value="pedrobaldera2026@gmail.com")
 
-# --- HEADER CON LOGOTIPO PERSONALIZADO O ICONO ---
+# --- HEADER CON LOGOTIPO PERSONALIZADO O ICONO EN TARJETA MODERNA ---
 col_logo, col_tit = st.columns([1, 4])
 with col_logo:
     if logo_file is not None:
@@ -222,8 +258,14 @@ with col_logo:
     else:
         st.markdown("## ⚖️")
 with col_tit:
-    st.markdown(f"## {custom_titulo}")
-    st.caption(custom_subtitulo)
+    st.markdown(f"""
+    <div style="padding-top: 5px;">
+        <h2 style="margin:0; color:#0F172A;">{custom_titulo}</h2>
+        <p style="margin:0; color:#64748B; font-size: 0.9rem;">{custom_subtitulo}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 # --- AVISO LEGAL DINÁMICO ---
 if st.session_state.mostrar_aviso_legal:
@@ -256,7 +298,13 @@ st.divider()
 
 # ================= 1. INICIO & APPS OFICIALES =================
 if menu == "🏠 Inicio & Apps Oficiales":
-    st.header("Gobernanza Tecnológica y Multiplataforma")
+    st.markdown("""
+    <div class="title-card">
+        <h2>Gobernanza Tecnológica y Multiplataforma</h2>
+        <p>Ecosistema seguro, trazable y verificado para Baldera Santos y Asociados, SRL.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.write(f"Bienvenido al ecosistema seguro. Soporte y cumplimiento coordinado a través de **{custom_soporte}**.")
     
     st.info("📱 **DISPONIBLE EN LÍNEA Y TIENDAS DE APLICACIONES (PRODUCCIÓN 100/100)**")
@@ -276,7 +324,14 @@ if menu == "🏠 Inicio & Apps Oficiales":
             st.session_state.paso_actual = "📝 1. Registro KYC & Biometría"
             st.rerun()
 
-    st.subheader("Fundamentos Jurídicos y Estándares Aplicados")
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("""
+    <div class="title-card">
+        <h2>Fundamentos Jurídicos y Estándares Aplicados</h2>
+        <p>Cumplimiento normativo estricto bajo estándares internacionales y locales.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.markdown("""
     * **Estándares Internacionales:** GAFI / FATF 40 Recomendaciones.
     * **Jurisdicción RD:** Ley 155-17 contra el Lavado de Activos y Ley 126-02 de Comercio Electrónico.
@@ -289,7 +344,12 @@ if menu == "🏠 Inicio & Apps Oficiales":
 
 # ================= 2. REGISTRO KYC & ACCESO DUAL =================
 if menu == "📝 1. Registro KYC & Biometría":
-    st.header("1. Registro de Cliente, Debida Diligencia (KYC) y CIUU")
+    st.markdown("""
+    <div class="title-card">
+        <h2>1. Registro de Cliente, Debida Diligencia (KYC) y CIUU</h2>
+        <p>Identificación formal y debida diligencia ampliada de beneficiarios.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     tab_reg, tab_log = st.tabs(["Crear Cuenta", "Iniciar Sesión"])
     
@@ -353,7 +413,13 @@ if menu == "📝 1. Registro KYC & Biometría":
 
 # ================= 3. RECUPERACIÓN DE ACCESO =================
 if menu == "🔑 2. Recuperación de Acceso":
-    st.header("2. Recuperación Segura de Contraseña")
+    st.markdown("""
+    <div class="title-card">
+        <h2>2. Recuperación Segura de Contraseña</h2>
+        <p>Protocolo criptográfico de restablecimiento de credenciales.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     rec_user = st.text_input("Correo o Teléfono Registrado", key="rec_user")
     
     if st.button("Generar Token de Recuperación", type="primary"):
@@ -380,7 +446,13 @@ if menu == "🔑 2. Recuperación de Acceso":
 
 # ================= 4. ENLACE DE CUENTAS =================
 if menu == "🏦 3. Enlace de Cuentas":
-    st.header("3. Enlace de Cuentas Bancarias (Non-Custodial)")
+    st.markdown("""
+    <div class="title-card">
+        <h2>3. Enlace de Cuentas Bancarias (Non-Custodial)</h2>
+        <p>Conexión directa entre entidades financieras autorizadas.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     if not st.session_state.sesion_activa:
         st.warning("⚠️ Inicie sesión primero.")
     else:
@@ -423,7 +495,13 @@ if menu == "🏦 3. Enlace de Cuentas":
 
 # ================= 5. ORDEN DE TRANSFERENCIA =================
 if menu == "💳 4. Orden de Transferencia":
-    st.header("4. Orden de Transferencia (Con Biometría / Token)")
+    st.markdown("""
+    <div class="title-card">
+        <h2>4. Orden de Transferencia (Con Biometría / Token)</h2>
+        <p>Ejecución de pagos bajo estricto control de titularidad y límites AML.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     if not st.session_state.sesion_activa:
         st.warning("⚠️ Inicie sesión primero.")
     elif not st.session_state.cuentas_db[st.session_state.sesion_activa]:
@@ -484,7 +562,13 @@ if menu == "💳 4. Orden de Transferencia":
 
 # ================= 6. ESTADO DE CUENTA =================
 if menu == "📊 5. Estado de Cuenta":
-    st.header("5. Estado de Cuenta y Trazabilidad")
+    st.markdown("""
+    <div class="title-card">
+        <h2>5. Estado de Cuenta y Trazabilidad</h2>
+        <p>Auditoría en tiempo real de operaciones ejecutadas.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     if not st.session_state.sesion_activa:
         st.warning("⚠️ Inicie sesión primero.")
     else:
@@ -502,7 +586,13 @@ if menu == "📊 5. Estado de Cuenta":
 
 # ================= 7. PANEL ADMIN =================
 if menu == "🛡️ 6. Panel Admin":
-    st.header("6. Panel de Control Administrador")
+    st.markdown("""
+    <div class="title-card">
+        <h2>6. Panel de Control Administrador</h2>
+        <p>Supervisión global de cumplimiento y gestión de riesgos.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
     clave_admin = st.text_input("Clave de Administrador", type="password")
     
     if clave_admin == "BASA20-ADMIN-COMPLIANCE":
@@ -517,7 +607,7 @@ if menu == "🛡️ 6. Panel Admin":
 # --- FOOTER LEGAL FIJO ---
 st.divider()
 st.markdown(f"""
-<div style="background-color: #F1F5F9; color: #1E293B; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #CBD5E1;">
+<div style="background-color: #FFFFFF; color: #1E293B; padding: 18px; border-radius: 12px; font-size: 12px; text-align: center; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
     <b>⚖️ Baldera Santos y Asociados, SRL (BASA20)</b><br>
     Cumplimiento Normativo GAFI/FATF, Ley 155-17 y Ley 126-02.<br>
     Soporte Oficial: {custom_soporte} | Producción Global 2026
