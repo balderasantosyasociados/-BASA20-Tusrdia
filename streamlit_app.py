@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Pro - Editor Dinámico en Vivo, Carga de Logo Personalizado, UI Luminosa Profesional.
+# Versión 10/10 Pro - UI Luminosa Profesional (Forzada en Blanco Hueso y Letras Negras)
 
 import streamlit as st
 import hashlib
@@ -17,22 +17,45 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILO VISUAL CORPORATIVO Y PROFESIONAL (MODERNO / SLATE / CERO ORO) ---
+# --- ESTILO VISUAL BLANCO HUESO Y LETRAS NEGRAS (FORZADO PROFESIONAL) ---
 st.markdown("""
 <style>
-.stApp {
-    background-color: #F8FAFC;
-    color: #0F172A;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+/* Forzar fondo blanco hueso y evitar inversión por modo oscuro del celular */
+.stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"], [data-testid="stToolbar"] {
+    background-color: #FAF9F6 !important;
+    color: #111111 !important;
 }
-h1, h2, h3, h4 {
-    color: #0F172A !important;
-    font-weight: 700;
-    letter-spacing: -0.025em;
+
+/* Forzar color negro/gris oscuro para títulos, textos y etiquetas */
+h1, h2, h3, h4, h5, h6, p, span, label, div {
+    color: #111111 !important;
 }
+
+/* Etiquetas de formularios en negro impecable */
+.stTextInput label, .stSelectbox label, .stNumberInput label, .stFileUploader label, .stRadio label, .stCheckbox label, .stDateInput label {
+    color: #111111 !important;
+    font-weight: 600 !important;
+}
+
+/* Cajas de texto y selectores modernos con fondo blanco puro y letras negras */
+.stTextInput>div>div>input, .stSelectbox>div>div>select, .stNumberInput>div>div>input {
+    background-color: #FFFFFF !important;
+    color: #111111 !important;
+    border-radius: 8px !important;
+    border: 1px solid #CBD5E1 !important;
+}
+
+/* Contenedores de selectbox y dropdowns */
+[data-baseweb="select"] > div {
+    background-color: #FFFFFF !important;
+    color: #111111 !important;
+    border-color: #CBD5E1 !important;
+}
+
+/* Ayudas visuales */
 .mini-help {
-    background-color: #F1F5F9;
-    color: #334155;
+    background-color: #F1F5F9 !important;
+    color: #1E293B !important;
     padding: 10px 14px;
     border-radius: 8px;
     font-size: 13px;
@@ -40,37 +63,22 @@ h1, h2, h3, h4 {
     margin-bottom: 15px;
     border-left: 4px solid #2563EB;
 }
+
+/* Botones principales ejecutivos */
 .stButton>button {
-    background-color: #1E293B;
-    color: #FFFFFF;
-    border-radius: 8px;
-    font-weight: 600;
+    background-color: #0F172A !important;
+    color: #FFFFFF !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
     width: 100%;
     height: 48px;
-    border: none;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: all 0.2s ease;
 }
 .stButton>button:hover {
-    background-color: #0F172A;
-    color: #FFFFFF;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-.stTextInput>div>div>input, .stSelectbox>div>div>select, .stNumberInput>div>div>input {
-    background-color: #FFFFFF;
-    color: #0F172A;
-    border-radius: 8px;
-    border: 1px solid #CBD5E1;
-}
-.stTextInput>div>div>input:focus, .stSelectbox>div>div>select:focus {
-    border-color: #2563EB;
-    box-shadow: 0 0 0 1px #2563EB;
-}
-div.row-widget.stRadio > div {
-    background-color: #FFFFFF;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #E2E8F0;
+    background-color: #1E293B !important;
+    color: #FFFFFF !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -186,7 +194,7 @@ if "cuentas_db" not in st.session_state:
 if "transacciones_db" not in st.session_state:
     st.session_state.transacciones_db = []
 if "facturas_db" not in st.session_state:
-    st.session_state.facturas_db = []
+    st.session_state.facturas_db = {}
 if "duplicar_datos" not in st.session_state:
     st.session_state.duplicar_datos = {}
 if "paso_actual" not in st.session_state:
@@ -198,7 +206,6 @@ if "mostrar_aviso_legal" not in st.session_state:
 st.sidebar.markdown("### ⚙️ Editor y Personalización Pro")
 st.sidebar.write("Personaliza textos, títulos y el logotipo institucional.")
 
-# Carga de Logo Personalizado
 logo_file = st.sidebar.file_uploader("📂 Cargar Logotipo (PNG/JPG)", type=["png", "jpg", "jpeg"])
 
 st.sidebar.divider()
@@ -224,7 +231,7 @@ if st.session_state.mostrar_aviso_legal:
     with aviso_container.container():
         st.info(f"""
         📢 **AVISO DE CUMPLIMIENTO INICIAL:** Sistema Non-Custodial activo 100/100 online. 
-        Soporte oficial: **{custom_soporte}**. *(Este aviso se cierra automáticamente)*
+        Soporte oficial: **{custom_soporte}**.
         """)
         if st.button("Cerrar Aviso"):
             st.session_state.mostrar_aviso_legal = False
@@ -510,7 +517,7 @@ if menu == "🛡️ 6. Panel Admin":
 # --- FOOTER LEGAL FIJO ---
 st.divider()
 st.markdown(f"""
-<div style="background-color: #F1F5F9; color: #1E293B; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #E2E8F0;">
+<div style="background-color: #F1F5F9; color: #1E293B; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #CBD5E1;">
     <b>⚖️ Baldera Santos y Asociados, SRL (BASA20)</b><br>
     Cumplimiento Normativo GAFI/FATF, Ley 155-17 y Ley 126-02.<br>
     Soporte Oficial: {custom_soporte} | Producción Global 2026
