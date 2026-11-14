@@ -6,7 +6,6 @@ import streamlit as st
 import hashlib
 import secrets
 import datetime
-import json
 import uuid
 import time
 from enum import Enum
@@ -18,7 +17,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILO VISUAL PROFESIONAL LUMINOSO (FONDOS CLAROS, CERO OSCURIDAD) ---
+# --- ESTILO VISUAL CORPORATIVO Y PROFESIONAL (MODERNO / SLATE / CERO ORO) ---
 st.markdown("""
 <style>
 .stApp {
@@ -27,38 +26,51 @@ st.markdown("""
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 h1, h2, h3, h4 {
-    color: #020617 !important;
+    color: #0F172A !important;
     font-weight: 700;
+    letter-spacing: -0.025em;
 }
 .mini-help {
     background-color: #F1F5F9;
-    color: #1E293B;
+    color: #334155;
     padding: 10px 14px;
     border-radius: 8px;
     font-size: 13px;
     margin-top: -5px;
     margin-bottom: 15px;
-    border-left: 4px solid #0284C7;
+    border-left: 4px solid #2563EB;
 }
 .stButton>button {
-    background-color: #0F172A;
+    background-color: #1E293B;
     color: #FFFFFF;
     border-radius: 8px;
     font-weight: 600;
     width: 100%;
     height: 48px;
     border: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
 }
 .stButton>button:hover {
-    background-color: #334155;
+    background-color: #0F172A;
     color: #FFFFFF;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
 }
-.stTextInput>div>div>input, .stSelectbox>div>div>select {
+.stTextInput>div>div>input, .stSelectbox>div>div>select, .stNumberInput>div>div>input {
     background-color: #FFFFFF;
     color: #0F172A;
     border-radius: 8px;
     border: 1px solid #CBD5E1;
+}
+.stTextInput>div>div>input:focus, .stSelectbox>div>div>select:focus {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 1px #2563EB;
+}
+div.row-widget.stRadio > div {
+    background-color: #FFFFFF;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #E2E8F0;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -183,16 +195,16 @@ if "mostrar_aviso_legal" not in st.session_state:
     st.session_state.mostrar_aviso_legal = True
 
 # --- PANEL LATERAL DE PERSONALIZACIÓN Y EDICIÓN DE CAMPOS ---
-st.sidebar.markdown("### ⚙️ Editor y Personalización Full")
-st.sidebar.write("Modifica textos, títulos y carga tu propio logotipo institucional.")
+st.sidebar.markdown("### ⚙️ Editor y Personalización Pro")
+st.sidebar.write("Personaliza textos, títulos y el logotipo institucional.")
 
 # Carga de Logo Personalizado
-logo_file = st.sidebar.file_uploader("📂 Cargar tu Logo Personalizado (PNG/JPG)", type=["png", "jpg", "jpeg"])
+logo_file = st.sidebar.file_uploader("📂 Cargar Logotipo (PNG/JPG)", type=["png", "jpg", "jpeg"])
 
 st.sidebar.divider()
-st.sidebar.markdown("#### ✏️ Edición de Textos de la Página")
+st.sidebar.markdown("#### ✏️ Textos de la Interfaz")
 custom_titulo = st.sidebar.text_input("Título Principal", value="BASA20 - Tusrdia")
-custom_subtitulo = st.sidebar.text_input("Subtítulo Institucional", value="Baldera Santos y Asociados, SRL | Cumplimiento Normativo y Gobernanza")
+custom_subtitulo = st.sidebar.text_input("Subtítulo Institucional", value="Baldera Santos y Asociados, SRL | Cumplimiento y Gobernanza")
 custom_soporte = st.sidebar.text_input("Correo de Soporte", value="pedrobaldera2026@gmail.com")
 
 # --- HEADER CON LOGOTIPO PERSONALIZADO O ICONO ---
@@ -212,9 +224,9 @@ if st.session_state.mostrar_aviso_legal:
     with aviso_container.container():
         st.info(f"""
         📢 **AVISO DE CUMPLIMIENTO INICIAL:** Sistema Non-Custodial activo 100/100 online. 
-        Soporte oficial: **{custom_soporte}**. *(Este aviso se cierra automáticamente en 10s)*
+        Soporte oficial: **{custom_soporte}**. *(Este aviso se cierra automáticamente)*
         """)
-        if st.button("Cerrar Aviso Ahora"):
+        if st.button("Cerrar Aviso"):
             st.session_state.mostrar_aviso_legal = False
             st.rerun()
     time.sleep(0.1)
@@ -498,7 +510,7 @@ if menu == "🛡️ 6. Panel Admin":
 # --- FOOTER LEGAL FIJO ---
 st.divider()
 st.markdown(f"""
-<div style="background-color: #E2E8F0; color: #0F172A; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #CBD5E1;">
+<div style="background-color: #F1F5F9; color: #1E293B; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #E2E8F0;">
     <b>⚖️ Baldera Santos y Asociados, SRL (BASA20)</b><br>
     Cumplimiento Normativo GAFI/FATF, Ley 155-17 y Ley 126-02.<br>
     Soporte Oficial: {custom_soporte} | Producción Global 2026
