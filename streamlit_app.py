@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Full Online - Aislamiento de Datos, Historiales Financieros, Biometría IA y Control Antifraude.
+# Versión 10/10 Full Online - Guía Contextual Dinámica, Copia de Registros, Códigos de Transacción Únicos y Biometría IA.
 
 import streamlit as st
 import hashlib
@@ -18,19 +18,17 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- ESTILO CORPORATIVO, JURÍDICO Y BOTONES POR COLORES CATEGÓRICOS ---
+# --- ESTILO CORPORATIVO Y MINI MENSAJES DE GUÍA CONTEXTUAL ---
 st.markdown("""
 <style>
 .main {background-color: #F4F6F9;}
 h1 {color: #0B2C4A; font-family: 'Helvetica Neue', sans-serif;}
 .legal-box {background-color: #FFF3CD; color: #856404; padding: 15px; border-radius: 5px; border-left: 5px solid #FFEEBA; font-size: 14px;}
-.audit-box {background-color: #D1ECF1; color: #0C5460; padding: 15px; border-radius: 5px; border-left: 5px solid #17A2B8; font-size: 14px;}
-.security-box {background-color: #D4EDDA; color: #155724; padding: 15px; border-radius: 5px; border-left: 5px solid #28A745; font-size: 14px;}
-.step-box {background-color: #FFFFFF; padding: 20px; border-radius: 10px; border: 1px solid #E2E8F0; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);}
+.mini-help {background-color: #E2E8F0; color: #1E293B; padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-top: -10px; margin-bottom: 15px; border-left: 3px solid #0B2C4A;}
 </style>
 """, unsafe_allow_html=True)
 
-# --- ENUMERACIONES Y MARCO REGULATORIO INTERNACIONAL ---
+# --- ENUMERACIONES Y MARCO REGULATORIO ---
 class Jurisdiccion(Enum):
     RD = "DO"  # República Dominicana (Ley 155-17, Ley 126-02, SB, UAF, DGII)
     US = "US"  # Estados Unidos (BSA, FinCEN, CFPB Sec. 1033, FDIC, OFAC)
@@ -112,7 +110,10 @@ class MotorCumplimientoYOpenBanking:
                 "motivo": "Operación sujeta a revisión preventiva por umbral de debida diligencia ampliada (Compliance Hold / Alerta ROS)."
             }
 
-        orden_id = str(uuid.uuid4())
+        # Generación de Código Único de Transacción (Datos Usuario + Fecha 6 Dígitos MMDDYY)
+        fecha_6dig = datetime.datetime.now().strftime("%m%d%y")
+        id_limpio = id_fiscal_origen.replace("-", "")[-4:]
+        orden_id = f"TX-{id_limpio}-{fecha_6dig}-{secrets.token_hex(2).upper()}"
         timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
         return {
@@ -146,11 +147,11 @@ st.markdown("""
 
 # --- MENÚ LATERAL Y PERSISTENCIA GLOBAL ---
 menu = st.sidebar.selectbox("Menú Ejecutivo BASA20", [
-    "🏠 Inicio & Guía de Pasos (User Journey)", 
+    "🏠 Inicio & Marco Legal", 
     "📝 1. Registro KYC, Biometría & Ficha CIUU", 
     "🔑 2. Recuperación de Acceso",
     "🏦 3. Enlace de Cuentas (Regulado)", 
-    "💳 4. Orden de Transferencia Real", 
+    "💳 4. Orden de Transferencia Real (Con Duplicación)", 
     "📊 5. Estado de Cuenta Histórico (Cliente)", 
     "🧾 6. Facturación y Comisiones (BSA)", 
     "🛡️ 7. Panel de Control y Auditoría General (Admin)"
@@ -162,87 +163,70 @@ st.sidebar.write("**Versión del Sistema:** 10/10 Pro - Producción Global 2026"
 
 # --- ESTADOS GLOBALES EN MEMORIA / PERSISTENCIA ---
 if "usuarios_db" not in st.session_state:
-    st.session_state.usuarios_db = {}  # {email: {password_hash, nombre, id_fiscal, telefono, token_recuperacion, ciuu, fuente_fondos, biometria_ok, qrcode}}
+    st.session_state.usuarios_db = {}
 if "sesion_activa" not in st.session_state:
-    st.session_state.sesion_activa = None  # email del usuario logueado actualmente
+    st.session_state.sesion_activa = None
 if "cuentas_db" not in st.session_state:
-    st.session_state.cuentas_db = {}  # {email: [cuentas]}
+    st.session_state.cuentas_db = {}
 if "transacciones_db" not in st.session_state:
-    st.session_state.transacciones_db = []  # Historial general global con trazabilidad total
+    st.session_state.transacciones_db = []
 if "facturas_db" not in st.session_state:
-    st.session_state.facturas_db = []  # Registro de comisiones y facturación BSA
+    st.session_state.facturas_db = []
+if "duplicar_datos" not in st.session_state:
+    st.session_state.duplicar_datos = {}
 
 
-# ================= 0. INICIO & GUÍA DE PASOS (USER JOURNEY) =================
-if menu == "🏠 Inicio & Guía de Pasos (User Journey)":
-    st.header("🗺️ Guía de Pasos y Acompañamiento Operativo (Full 100/100 Online)")
-    st.write("Bienvenido al Portal de Gobernanza BASA20. Este flujo interactivo lo guiará paso a paso desde su registro inicial hasta la ejecución de operaciones seguras con validación por IA.")
-
-    # Tarjetas de Fases con Botones de Colores Categóricos
-    st.markdown("""
-    <div class="step-box">
-        <h3>🔵 Fase 1: Registro Inicial y Credenciales</h3>
-        <p>Complete sus datos básicos de acceso y configure su correo de soporte verificado (<b>pedrobaldera2026@gmail.com</b>). El sistema activa el autoguardado automático en segundo plano.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    if st.button("Ir al Paso 1: Registro KYC y Biometría", key="btn_fase1", type="primary"):
-        st.info("Navegue en el menú lateral a la sección '📝 1. Registro KYC, Biometría & Ficha CIUU'.")
-
-    st.markdown("""
-    <div class="step-box" style="border-left: 5px solid #FF851B;">
-        <h3>🟧 Fase 2: Validación por IA (Cédula, ID, SNC o Registro Único)</h3>
-        <p>Cargue su documento oficial. La Inteligencia Artificial del sistema analiza y extrae los datos legales de forma automática y segura.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class="step-box" style="border-left: 5px solid #B10DC9;">
-        <h3>🟪 Fase 3: Biometría Facial / Huella y Ficha CIUU</h3>
-        <p>Valide su identidad mediante escaneo biométrico y complete la ficha de actividad comercial con su código CIUU y declaración de origen de fondos.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class="step-box" style="border-left: 5px solid #FFDC00; color: #333;">
-        <h3>🟨 Fase 4: Código QR de Acceso Rápido</h3>
-        <p>El sistema genera un código QR personal único para autenticaciones instantáneas y reanudación segura de operaciones sin contraseñas.</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class="step-box" style="border-left: 5px solid #2ECC40;">
-        <h3>🟩 Fase 5: Operaciones Full Online & Historiales Históricos</h3>
-        <p>Enlace cuentas bancarias autorizadas y ejecute transferencias directas con trazabilidad inalterable y autoguardado de datos históricos.</p>
-    </div>
-    """, unsafe_allow_html=True)
-    if st.button("Ir al Panel de Operaciones y Transferencias", key="btn_fase5"):
-        st.info("Navegue en el menú lateral a '💳 4. Orden de Transferencia Real' o '📊 5. Estado de Cuenta Histórico'.")
+# ================= 1. INICIO & MARCO LEGAL =================
+if menu == "🏠 Inicio & Marco Legal":
+    st.header("Gobernanza Tecnológica y Cumplimiento Normativo Integral")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.metric("Modelo Operativo", "Non-Custodial / SaaS Real")
+    with c2:
+        st.metric("Custodia de Fondos", "0% (Protección Anti-Hacker)")
+    with c3:
+        st.metric("Historiales Auditados", "Diario, Mensual y Anual")
+    
+    st.subheader("Fundamentos Jurídicos y Estándares Aplicados")
+    st.write("• **Estándares Internacionales:** 40 Recomendaciones del Grupo de Acción Financiera Internacional (GAFI / FATF).")
+    st.write("• **Jurisdicción República Dominicana:** Ley 155-17 contra el Lavado de Activos y Financiamiento del Terrorismo, Ley 126-02 de Comercio Electrónico y Documentos Digitales, Normativa de la Superintendencia de Bancos (SB) y Banco Central (BCRD).")
+    st.success("El uso de este sistema implica la aceptación irrevocable de los protocolos de Debida Diligencia (KYC/AML), el aislamiento estricto de datos por cliente y la autorización de entrega de información a autoridades bajo mandato legal.")
 
 
-# ================= 1. REGISTRO KYC, BIOMETRÍA & FICHA CIUU =================
+# ================= 2. REGISTRO KYC, BIOMETRÍA & FICHA CIUU =================
 if menu == "📝 1. Registro KYC, Biometría & Ficha CIUU":
     st.header("1. Registro de Cliente, Debida Diligencia (KYC), Biometría y Declaración CIUU")
-    st.write("Complete el formulario oficial. Sus datos quedan protegidos con autoguardado inteligente y cifrado avanzado.")
+    st.write("Complete el formulario oficial. Cada campo cuenta con asistencia dinámica guiada por IA.")
     
     tab_reg, tab_log = st.tabs(["Crear Nueva Cuenta con IA", "Iniciar Sesión (Login)"])
     
     with tab_reg:
-        st.subheader("Paso A: Datos Personales y de Contacto")
         nombre = st.text_input("Nombre Completo / Razón Social", key="reg_nombre")
+        st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Ingrese su nombre legal completo tal como figura en su documento de identidad oficial.</div>', unsafe_allow_html=True)
+        
         jurisdiccion = st.selectbox("Jurisdicción Fiscal Principal", ["República Dominicana (DO)", "Estados Unidos (US)"], key="reg_jur")
+        st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Seleccione el país de emisión de su documentación fiscal y bancaria.</div>', unsafe_allow_html=True)
+        
         id_fiscal = st.text_input("Cédula / RNC (RD) o SSN / EIN (US)", key="reg_idf")
+        st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Formato requerido sin guiones o con guiones reglamentarios (Ej: 001-0000000-1).</div>', unsafe_allow_html=True)
+        
         email = st.text_input("Correo Electrónico (Soporte: pedrobaldera2026@gmail.com)", key="reg_email")
+        st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Este correo será su usuario único de acceso y canal de notificaciones de cumplimiento.</div>', unsafe_allow_html=True)
+        
         telefono = st.text_input("Teléfono Móvil", key="reg_tel")
+        st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Incluya código de área para validación de seguridad por SMS/OTP.</div>', unsafe_allow_html=True)
+        
         password = st.text_input("Contraseña de Acceso (Mínimo 8 caracteres)", type="password", key="reg_pass")
+        st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Utilice una combinación de letras mayúsculas, minúsculas, números y símbolos.</div>', unsafe_allow_html=True)
         
-        st.subheader("Paso B: Carga de Documentos y Validación por IA")
         doc_identidad = st.file_uploader("Subir Cédula, Licencia, SNC o Registro Único Oficial", type=["jpg","png","pdf"], key="doc_id_oficial")
+        st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Asegúrese de que la imagen sea legible; el motor OCR extraerá automáticamente sus datos.</div>', unsafe_allow_html=True)
         
-        st.subheader("Paso C: Biometría (Escaneo Facial o Huella)")
-        biometria_check = st.checkbox("✅ Confirmo haber realizado el escaneo biométrico facial / huella en cámara para validar titularidad en vivo.", key="bio_check")
+        biometria_check = st.checkbox("✅ Confirmo haber realizado el escaneo biométrico facial / huella en cámara.", key="bio_check")
         
-        st.subheader("Paso D: Ficha Comercial y Origen de Fondos (Código CIUU)")
-        codigo_ciuu = st.text_input("Código de Actividad Comercial CIUU (Ej: 6920 - Contabilidad y Auditoría, 4510 - Venta de Vehículos, etc.)", key="reg_ciuu")
+        codigo_ciuu = st.text_input("Código de Actividad Comercial CIUU", key="reg_ciuu", value="6920")
+        st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Escriba el código de 4 dígitos correspondiente a su actividad económica principal (Ej: 6920 para Contabilidad).</div>', unsafe_allow_html=True)
+        
         fuente_fondos = st.selectbox("Declaración Fuente de Origen de Fondos", [
             "Honorarios Profesionales / Servicios de Auditoría", 
             "Actividad Comercial / Ventas", 
@@ -250,22 +234,13 @@ if menu == "📝 1. Registro KYC, Biometría & Ficha CIUU":
             "Inversiones y Dividendos", 
             "Préstamos Bancarios / Financiamiento"
         ], key="reg_fuente")
+        st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Declaración jurada exigida por normativas antilavado (AML/FATF).</div>', unsafe_allow_html=True)
         
         acepta_acuerdo = st.checkbox("Acepto el Acuerdo Marco de Cumplimiento, la política antilavado (AML) y el modelo Non-Custodial.", key="chk_acuerdo")
         
-        # Botones de colores categóricos simulados con Streamlit
-        st.markdown("---")
-        col_b1, col_b2 = st.columns(2)
-        with col_b1:
-            btn_guardar_borrador = st.button("💾 Autoguardar Borrador Ficha", type="secondary")
-            if btn_guardar_borrador:
-                st.toast("⚡ Progreso guardado automáticamente en memoria segura (Auto-save activo).", icon="💾")
-        with col_b2:
-            btn_registrar = st.button("🚀 Registrar Cuenta Completa 100/100", type="primary")
-            
-        if btn_registrar:
+        if st.button("🚀 Registrar Cuenta Completa 100/100", type="primary"):
             if not email or not password or not id_fiscal or not codigo_ciuu:
-                st.error("Por favor complete los campos obligatorios: Correo, Contraseña, Identificación Fiscal y Código CIUU.")
+                st.error("Por favor complete los campos obligatorios.")
             elif email in st.session_state.usuarios_db:
                 st.error("Este correo ya se encuentra registrado.")
             elif len(password) < 8:
@@ -290,20 +265,21 @@ if menu == "📝 1. Registro KYC, Biometría & Ficha CIUU":
                     "fecha_registro": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
                 st.session_state.cuentas_db[email] = []
-                st.success(f"✅ ¡Registro exitoso! Ficha completada con IA y Código QR generado: **{qr_code_unique}**")
-                st.info("Ya puede iniciar sesión en la pestaña contigua.")
+                st.success(f"✅ ¡Registro exitoso! Código QR generado: **{qr_code_unique}**. Ya puede iniciar sesión.")
 
     with tab_log:
         log_email = st.text_input("Correo Electrónico", key="log_email")
+        st.markdown('<div class="mini-help">💡 Ingrese su correo registrado.</div>', unsafe_allow_html=True)
+        
         log_pass = st.text_input("Contraseña", type="password", key="log_pass")
+        st.markdown('<div class="mini-help">💡 Ingrese su clave de acceso.</div>', unsafe_allow_html=True)
         
         if st.button("Entrar a Mi Panel Seguro", type="primary"):
             if log_email in st.session_state.usuarios_db:
                 stored_hash = st.session_state.usuarios_db[log_email]["password_hash"]
                 if stored_hash == hashlib.sha256(log_pass.encode()).hexdigest():
                     st.session_state.sesion_activa = log_email
-                    user_d = st.session_state.usuarios_db[log_email]
-                    st.success(f"✅ ¡Bienvenido, {user_d['nombre']}! (Código QR Activo: {user_d['qrcode']})")
+                    st.success(f"✅ ¡Bienvenido, {st.session_state.usuarios_db[log_email]['nombre']}!")
                     st.rerun()
                 else:
                     st.error("Contraseña incorrecta.")
@@ -311,18 +287,17 @@ if menu == "📝 1. Registro KYC, Biometría & Ficha CIUU":
                 st.error("Usuario no encontrado.")
 
 
-# ================= 2. RECUPERACIÓN DE ACCESO =================
+# ================= 3. RECUPERACIÓN DE ACCESO =================
 if menu == "🔑 2. Recuperación de Acceso":
     st.header("2. Recuperación Segura de Contraseña")
-    st.write("Si olvidó su clave, ingrese su correo registrado para recibir un token de recuperación temporal coordinado con soporte (**pedrobaldera2026@gmail.com**).")
-    
     rec_email = st.text_input("Correo Electrónico Registrado", key="rec_email")
+    st.markdown('<div class="mini-help">💡 Ingrese el correo vinculado a su perfil para recibir asistencia o token temporal.</div>', unsafe_allow_html=True)
+    
     if st.button("Generar Token de Recuperación", type="primary"):
         if rec_email in st.session_state.usuarios_db:
             token_temp = secrets.token_hex(4).upper()
             st.session_state.usuarios_db[rec_email]["token_rec"] = token_temp
             st.success(f"🔑 Token generado con éxito para {rec_email}: **{token_temp}**")
-            st.info("Utilice este token en el campo inferior para reasignar su contraseña.")
         else:
             st.error("El correo electrónico no existe en el sistema.")
             
@@ -335,32 +310,41 @@ if menu == "🔑 2. Recuperación de Acceso":
         if user_data and user_data.get("token_rec") == token_input.strip().upper():
             user_data["password_hash"] = hashlib.sha256(nueva_clave.encode()).hexdigest()
             user_data.pop("token_rec", None)
-            st.success("✅ Contraseña restablecida exitosamente. Ya puede iniciar sesión.")
+            st.success("✅ Contraseña restablecida exitosamente.")
         else:
             st.error("Token inválido o correo incorrecto.")
 
 
-# ================= 3. ENLACE DE CUENTAS =================
+# ================= 4. ENLACE DE CUENTAS =================
 if menu == "🏦 3. Enlace de Cuentas (Regulado)":
     st.header("3. Registro de Cuentas Bancarias Origen y Destino (Non-Custodial)")
     if not st.session_state.sesion_activa:
-        st.warning("⚠️ Debe iniciar sesión en la sección 1 para acceder a sus cuentas.")
+        st.warning("⚠️ Debe iniciar sesión en la sección 1.")
     else:
         user_email = st.session_state.sesion_activa
         user_info = st.session_state.usuarios_db[user_email]
-        st.info(f"Cliente Activo: {user_info['nombre']} | ID Fiscal: {user_info['id_fiscal']} | Actividad CIUU: {user_info['ciuu']}")
+        st.info(f"Cliente: {user_info['nombre']} | ID Fiscal: {user_info['id_fiscal']}")
         
         pais_sel = Jurisdiccion.RD if "República Dominicana" in user_info['jurisdiccion'] else Jurisdiccion.US
         bancos_disponibles = list(BANCOS_REGISTRADOS_GLOBAL[pais_sel.name].keys())
         
-        st.subheader("Configuración de Cuentas (Autoguardado Seguro)")
         banco_orig = st.selectbox("Banco Origen (Su Banco)", bancos_disponibles, format_func=lambda x: BANCOS_REGISTRADOS_GLOBAL[pais_sel.name][x]["nombre"])
-        cuenta_orig = st.text_input("Últimos 4 dígitos o token de cuenta origen")
+        st.markdown('<div class="mini-help">💡 Seleccione su institución bancaria titular de origen.</div>', unsafe_allow_html=True)
+        
+        cuenta_orig = st.text_input("Últimos 4 dígitos o token de cuenta origen", value=st.session_state.duplicar_datos.get("cta_orig", ""))
+        st.markdown('<div class="mini-help">💡 Ingrese la referencia segura de su cuenta bancaria.</div>', unsafe_allow_html=True)
         
         banco_dest = st.selectbox("Banco Destino (Receptor / Préstamo)", bancos_disponibles, format_func=lambda x: BANCOS_REGISTRADOS_GLOBAL[pais_sel.name][x]["nombre"])
-        cuenta_dest = st.text_input("Número de cuenta destino o referencia")
-        titular_dest = st.text_input("Nombre del Beneficiario Titular (Debe ser idéntico a su nombre)")
-        id_fiscal_dest = st.text_input("Cédula / RNC / SSN del Beneficiario Destino")
+        st.markdown('<div class="mini-help">💡 Seleccione el banco destino autorizado al mismo titular.</div>', unsafe_allow_html=True)
+        
+        cuenta_dest = st.text_input("Número de cuenta destino o referencia", value=st.session_state.duplicar_datos.get("cta_dest", ""))
+        st.markdown('<div class="mini-help">💡 Número de cuenta o préstamo receptor.</div>', unsafe_allow_html=True)
+        
+        titular_dest = st.text_input("Nombre del Beneficiario Titular", value=st.session_state.duplicar_datos.get("titular", user_info['nombre']))
+        st.markdown('<div class="mini-help">💡 Debe coincidir exactamente con el titular verificado por KYC.</div>', unsafe_allow_html=True)
+        
+        id_fiscal_dest = st.text_input("Cédula / RNC / SSN del Beneficiario Destino", value=st.session_state.duplicar_datos.get("id_fiscal_dest", user_info['id_fiscal']))
+        st.markdown('<div class="mini-help">💡 Validación automática cruzada de mismo titular.</div>', unsafe_allow_html=True)
 
         if st.button("Validar y Enlazar Cuenta", type="primary"):
             try:
@@ -369,7 +353,7 @@ if menu == "🏦 3. Enlace de Cuentas (Regulado)":
                 mismo_tit = (id_fiscal_dest.replace("-","").strip().upper() == user_info['id_fiscal'].replace("-","").strip().upper())
                 
                 if not mismo_tit:
-                    st.error("❌ RECHAZADO POR CUMPLIMIENTO: La identificación fiscal del destino no coincide con su titularidad verificada.")
+                    st.error("❌ RECHAZADO POR CUMPLIMIENTO: La identificación fiscal del destino no coincide con su titularidad.")
                 else:
                     nueva_cuenta = {
                         "id": str(uuid.uuid4())[:8],
@@ -381,7 +365,7 @@ if menu == "🏦 3. Enlace de Cuentas (Regulado)":
                         "fecha": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
                     }
                     st.session_state.cuentas_db[user_email].append(nueva_cuenta)
-                    st.success("✅ Cuenta enlazada con éxito y protegida bajo cifrado.")
+                    st.success("✅ Cuenta enlazada con éxito.")
             except Exception as e:
                 st.error(f"Error de validación institucional: {e}")
                 
@@ -390,9 +374,9 @@ if menu == "🏦 3. Enlace de Cuentas (Regulado)":
             st.table(st.session_state.cuentas_db[user_email])
 
 
-# ================= 4. ORDEN DE TRANSFERENCIA REAL =================
-if menu == "💳 4. Orden de Transferencia Real":
-    st.header("4. Emisión de Orden de Transferencia Directa Real (Banco a Banco)")
+# ================= 5. ORDEN DE TRANSFERENCIA REAL =================
+if menu == "💳 4. Orden de Transferencia Real (Con Duplicación)":
+    st.header("4. Emisión de Orden de Transferencia Directa Real (Con Duplicación de Registros)")
     if not st.session_state.sesion_activa:
         st.warning("⚠️ Debe iniciar sesión para emitir órdenes.")
     elif not st.session_state.cuentas_db[st.session_state.sesion_activa]:
@@ -401,13 +385,31 @@ if menu == "💳 4. Orden de Transferencia Real":
         user_email = st.session_state.sesion_activa
         user_info = st.session_state.usuarios_db[user_email]
         
+        # Opción para duplicar desde transacciones previas
+        historial_cliente = [t for t in st.session_state.transacciones_db if t["email"] == user_email]
+        if historial_cliente:
+            st.subheader("📋 Duplicar Registro de Operación Anterior")
+            opciones_duplicar = {f"ID: {t['orden_id']} | Monto: {t['monto']} {t['moneda']} ({t['origen']} ➡️ {t['destino']})": t for t in historial_cliente}
+            sel_dup = st.selectbox("Seleccione una operación previa para duplicar sus datos", ["-- Ninguna (Nueva operación) --"] + list(opciones_duplicar.keys()))
+            
+            if sel_dup != "-- Ninguna (Nueva operación) --" and st.button("Copiar / Duplicar Datos para Nueva Operación"):
+                t_sel = opciones_duplicar[sel_dup]
+                st.session_state.duplicar_monto = t_sel["monto"]
+                st.session_state.duplicar_moneda = t_sel["moneda"]
+                st.success("✅ Datos duplicados con éxito. Puede ajustar los valores abajo y ejecutar la nueva orden.")
+        
         cuentas_disp = st.session_state.cuentas_db[user_email]
         cuenta_sel = st.selectbox("Seleccione Cuenta Enlazada", cuentas_disp, format_func=lambda x: f"{x['origen']} ➡️ {x['destino']}")
+        st.markdown('<div class="mini-help">💡 Seleccione la ruta bancaria autorizada para la ejecución de la orden.</div>', unsafe_allow_html=True)
         
-        monto = st.number_input("Monto Real a Transferir", min_value=1.0, value=1000.00)
+        monto_def = st.session_state.get("duplicar_monto", 1000.00)
+        monto = st.number_input("Monto Real a Transferir", min_value=1.0, value=float(monto_def))
+        st.markdown('<div class="mini-help">💡 Monto sujeto a umbrales de debida diligencia AML (< US$ 10,000.00).</div>', unsafe_allow_html=True)
+        
         moneda = st.selectbox("Moneda", ["DOP", "USD"])
+        st.markdown('<div class="mini-help">💡 Seleccione la divisa oficial de liquidación.</div>', unsafe_allow_html=True)
         
-        if st.button("Ejecutar Transferencia Directa Online", type="primary"):
+        if st.button("Ejecutar Transferencia Directa Online (Código Único)", type="primary"):
             pais_sel = Jurisdiccion.RD if "República Dominicana" in user_info['jurisdiccion'] else Jurisdiccion.US
             banco_o_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.name].items() if v["nombre"] == cuenta_sel["origen"]][0]
             banco_d_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.name].items() if v["nombre"] == cuenta_sel["destino"]][0]
@@ -441,32 +443,31 @@ if menu == "💳 4. Orden de Transferencia Real":
                     "estado": resultado["estado"]
                 }
                 st.session_state.transacciones_db.append(transaccion_registro)
-                st.success("✅ ¡Transferencia procesada online con éxito! Datos guardados en el histórico de operaciones.")
+                st.success(f"✅ ¡Transferencia procesada online con éxito! Código Único Asignado: **{resultado['orden_id']}**")
                 st.json(resultado)
 
 
-# ================= 5. ESTADO DE CUENTA HISTÓRICO (CLIENTE) =================
+# ================= 6. ESTADO DE CUENTA HISTÓRICO (CLIENTE) =================
 if menu == "📊 5. Estado de Cuenta Histórico (Cliente)":
     st.header("5. Estado de Cuenta en Línea y Trazabilidad (Entradas, Salidas y Historiales)")
     if not st.session_state.sesion_activa:
-        st.warning("⚠️ Inicie sesión para ver su estado de cuenta personal.")
+        st.warning("⚠️ Inicie sesión para ver su estado de cuenta.")
     else:
         user_email = st.session_state.sesion_activa
         user_info = st.session_state.usuarios_db[user_email]
         
-        st.info(f"Titular: {user_info['nombre']} | Aislamiento de datos protegido (Solo usted visualiza sus registros históricos).")
-        
+        st.info(f"Titular: {user_info['nombre']} | Aislamiento de datos protegido.")
         historial_cliente = [t for t in st.session_state.transacciones_db if t["email"] == user_email]
         
         c1, c2 = st.columns(2)
         with c1:
-            st.metric("Total Operaciones Realizadas", len(historial_cliente))
+            st.metric("Total Operaciones", len(historial_cliente))
         with c2:
             monto_total_op = sum([t["monto"] for t in historial_cliente])
             st.metric("Volumen Operado", f"{monto_total_op:,.2f}")
             
         st.subheader("Desglose Histórico (Diario, Mensual y Anual)")
-        filtro_tiempo = st.radio("Seleccione Período de Visualización", ["Todas", "Diario (Hoy)", "Mensual", "Anual"])
+        filtro_tiempo = st.radio("Seleccione Período", ["Todas", "Diario (Hoy)", "Mensual", "Anual"])
         
         hoy_str = datetime.datetime.now().strftime("%Y-%m-%d")
         mes_str = datetime.datetime.now().strftime("%Y-%m")
@@ -486,23 +487,21 @@ if menu == "📊 5. Estado de Cuenta Histórico (Cliente)":
             st.info("No hay transacciones registradas para el período seleccionado.")
 
 
-# ================= 6. FACTURACIÓN Y COMISIONES (BSA) =================
+# ================= 7. FACTURACIÓN Y COMISIONES (BSA) =================
 if menu == "🧾 6. Facturación y Comisiones (BSA)":
     st.header("6. Facturación de Servicios y Determinación de Impuestos (Baldera Santos y Asociados, SRL)")
-    st.write("Gestión exclusiva de los ingresos por comisiones y servicios profesionales de la firma.")
-    
     if not st.session_state.sesion_activa:
-        st.warning("⚠️ Inicie sesión como cliente para generar su factura de servicio.")
+        st.warning("⚠️ Inicie sesión como cliente.")
     else:
         user_email = st.session_state.sesion_activa
         user_info = st.session_state.usuarios_db[user_email]
         
-        plan = st.selectbox("Seleccione Plan de Gestión y Trazabilidad", ["Gestión Única - US$ 5.00", "Plan Mensual Corporativo - US$ 20.00", "Plan Anual de Trazabilidad - US$ 199.00"])
+        plan = st.selectbox("Seleccione Plan de Gestión", ["Gestión Única - US$ 5.00", "Plan Mensual Corporativo - US$ 20.00", "Plan Anual de Trazabilidad - US$ 199.00"])
         monto_comision = 5.00 if "5.00" in plan else (20.00 if "20.00" in plan else 199.00)
         
         if st.button("Pagar Comisión de Servicio y Emitir Factura Fiscal", type="primary"):
             factura_id = f"BSA-FAC-2026-{secrets.token_hex(3).upper()}"
-            impuesto_estimado = monto_comision * 0.18  # ITBIS / Impuesto local aplicable
+            impuesto_estimado = monto_comision * 0.18
             
             factura_registro = {
                 "factura_id": factura_id,
@@ -516,46 +515,42 @@ if menu == "🧾 6. Facturación y Comisiones (BSA)":
             st.session_state.facturas_db.append(factura_registro)
             st.success(f"✅ Factura emitida con éxito: {factura_id}")
             st.json(factura_registro)
-            st.info("Estos ingresos se acumulan en el libro contable de Baldera Santos y Asociados para su respectiva declaración fiscal.")
 
 
-# ================= 7. PANEL ADMIN & AUDITORÍA GENERAL =================
+# ================= 8. PANEL ADMIN & AUDITORÍA GENERAL =================
 if menu == "🛡️ 7. Panel de Control y Auditoría General (Admin)":
     st.header("7. Panel de Control Administrador & Oficial de Cumplimiento")
     st.write("Soporte Técnico y de Cumplimiento: **pedrobaldera2026@gmail.com**")
-    clave_admin = st.text_input("Clave de Acceso Restringido (Administrador Principal)", type="password")
+    clave_admin = st.text_input("Clave de Acceso Restringido", type="password")
     
     if clave_admin == "BASA20-ADMIN-COMPLIANCE":
         st.success("🔓 Acceso de Administrador Autorizado.")
         
         c1, c2, c3, c4 = st.columns(4)
         with c1:
-            st.metric("Total Clientes Registrados", len(st.session_state.usuarios_db))
+            st.metric("Total Clientes", len(st.session_state.usuarios_db))
         with c2:
-            st.metric("Total Transacciones Globales", len(st.session_state.transacciones_db))
+            st.metric("Total Transacciones", len(st.session_state.transacciones_db))
         with c3:
             total_comisiones = sum([f["comision_neta"] for f in st.session_state.facturas_db])
-            st.metric("Ingresos por Comisiones", f"US$ {total_comisiones:,.2f}")
+            st.metric("Comisiones", f"US$ {total_comisiones:,.2f}")
         with c4:
             total_impuestos = sum([f["impuesto_determinado"] for f in st.session_state.facturas_db])
-            st.metric("Impuestos Acumulados", f"US$ {total_impuestos:,.2f}")
+            st.metric("Impuestos (DGII)", f"US$ {total_impuestos:,.2f}")
             
-        st.subheader("Historial General de Operaciones (Vista Exclusiva Administrador)")
+        st.subheader("Historial General de Operaciones")
         if st.session_state.transacciones_db:
             st.table(st.session_state.transacciones_db)
         else:
-            st.info("No hay transacciones registradas en el sistema general.")
+            st.info("No hay transacciones registradas.")
             
-        st.subheader("Registro de Facturación y Obligaciones Fiscales")
+        st.subheader("Registro de Facturación")
         if st.session_state.facturas_db:
             st.table(st.session_state.facturas_db)
         else:
-            st.info("No hay facturas de comisiones emitidas.")
-            
-        st.subheader("Protocolo de Cooperación y Auditoría Estatal")
-        st.write("Los registros anteriores cumplen con la Ley 155-17 y están preparados para auditorías de la UAF o DGII bajo requerimiento legal.")
+            st.info("No hay facturas de comisiones.")
     elif clave_admin:
-        st.error("❌ Clave de administrador incorrecta.")
+        st.error("❌ Clave incorrecta.")
 
 st.divider()
 st.caption("BASA20-Tusrdia © 2026 Baldera Santos y Asociados, SRL | Soporte: pedrobaldera2026@gmail.com | Ley 155-17 & FATF Standards")
