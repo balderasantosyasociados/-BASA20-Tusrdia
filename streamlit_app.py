@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Pro - UI 100% Luminosa, Cero Dorado, Forzada en Blanco Hueso, Negro e Índigo Profesional
+# Versión 10/10 Pro - UI 100% Luminosa, Cero Dorado, Forzada en Blanco Hueso, Negro e Índigo Profesional + Auto-Guardado Histórico
 
 import streamlit as st
 import hashlib
@@ -17,7 +17,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILO VISUAL PRO: ELIMINACIÓN TOTAL DE DORADOS Y FORZADO DE ESTÉTICA CORPORATIVA ---
+# --- ESTILO VISUAL PRO: ELIMINACIÓN TOTAL DE DORADOS, TABLAS CLARAS Y FORZADO CORPORATIVO ---
 st.markdown("""
 <style>
 /* Fondo general de la aplicación en blanco hueso elegante */
@@ -27,10 +27,8 @@ st.markdown("""
 }
 
 /* Tipografía general y títulos limpios */
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, span, p, label {
     color: #0F172A !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.025em;
 }
 
 /* Tarjetas de Título Modernas y Elegantes */
@@ -75,7 +73,26 @@ h1, h2, h3, h4, h5, h6 {
     border-color: #CBD5E1 !important;
 }
 
-/* ELIMINAR CUALQUIER TONO DORADO/AMARILLO EN PESTAÑAS (TABS) Y REEMPLAZAR POR ÍNDIGO/NEGRO */
+/* CORRECCIÓN DE TABLAS: Texto negro puro y fondo blanco para máxima legibilidad */
+table {
+    background-color: #FFFFFF !important;
+    color: #111111 !important;
+    border-radius: 8px !important;
+}
+
+thead tr th {
+    background-color: #F1F5F9 !important;
+    color: #0F172A !important;
+    font-weight: 700 !important;
+}
+
+tbody tr td {
+    color: #111111 !important;
+    background-color: #FFFFFF !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+}
+
+/* Pestañas (Tabs) corporativas sin tonos dorados */
 .stTabs [data-baseweb="tab-list"] {
     gap: 8px;
     background-color: #F1F5F9;
@@ -97,7 +114,6 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
-/* Línea indicadora de pestaña activa en azul ejecutivo (Cero Dorado) */
 .stTabs [data-baseweb="tab-highlight"] {
     background-color: #2563EB !important;
 }
@@ -117,7 +133,7 @@ h1, h2, h3, h4, h5, h6 {
     border-bottom: 1px solid #E2E8F0;
 }
 
-/* Botones principales ejecutivos con texto blanco garantizado */
+/* Botones principales ejecutivos */
 .stButton>button {
     background-color: #0F172A !important;
     color: #FFFFFF !important;
@@ -136,7 +152,7 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-/* Contenedores de información (st.info) con diseño limpio */
+/* Contenedores de información */
 .stAlert {
     background-color: #EFF6FF !important;
     color: #1E3A8A !important;
@@ -148,8 +164,8 @@ h1, h2, h3, h4, h5, h6 {
 
 # --- ENUMERACIONES Y MARCO REGULATORIO ---
 class Jurisdiccion(Enum):
-    RD = "DO"  # República Dominicana (Ley 155-17, Ley 126-02, SB, UAF, DGII)
-    US = "US"  # Estados Unidos (BSA, FinCEN, CFPB Sec. 1033, FDIC, OFAC)
+    RD = "DO"
+    US = "US"
 
 class EstadoOrden(Enum):
     VALIDADA = "VALIDADA_MISMO_TITULAR_KYC"
@@ -157,7 +173,6 @@ class EstadoOrden(Enum):
     ALERTA_OPERACION_SOSPECHOSA = "BLOQUEADA_PREVENTIVAMENTE_ROS"
     RECHAZADA_CUMPLIMIENTO = "RECHAZADA_LISTAS_RESTRICTIVAS_AML"
 
-# Catálogo global sincronizado con pasarelas regulatorias oficiales (FDIC / SB-RD)
 BANCOS_REGISTRADOS_GLOBAL = {
     "US": {
         "JPMORGAN": {"nombre": "JPMorgan Chase Bank, N.A.", "regulador": "FDIC-628", "red": "ACH_RTP_FEDNOW", "activo": True},
@@ -247,7 +262,7 @@ class MotorCumplimientoYOpenBanking:
 
 motor_basa = MotorCumplimientoYOpenBanking(entorno="production")
 
-# --- ESTADOS GLOBALES ---
+# --- ESTADOS GLOBALES Y PERSISTENCIA HISTÓRICA AUTOMÁTICA ---
 if "usuarios_db" not in st.session_state:
     st.session_state.usuarios_db = {}
 if "sesion_activa" not in st.session_state:
@@ -256,16 +271,24 @@ if "cuentas_db" not in st.session_state:
     st.session_state.cuentas_db = {}
 if "transacciones_db" not in st.session_state:
     st.session_state.transacciones_db = []
-if "facturas_db" not in st.session_state:
-    st.session_state.facturas_db = {}
-if "duplicar_datos" not in st.session_state:
-    st.session_state.duplicar_datos = {}
+if "historico_general" not in st.session_state:
+    st.session_state.historico_general = []
 if "paso_actual" not in st.session_state:
     st.session_state.paso_actual = "🏠 Inicio & Apps Oficiales"
 if "mostrar_aviso_legal" not in st.session_state:
     st.session_state.mostrar_aviso_legal = True
 
-# --- PANEL LATERAL DE PERSONALIZACIÓN Y EDICIÓN DE CAMPOS ---
+# Función de Auto-Guardado en Histórico General ante cualquier cambio
+def registrar_historico(accion: str, detalle: str):
+    registro = {
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "usuario": st.session_state.sesion_activa or "Sistema / Anónimo",
+        "accion": accion,
+        "detalle": detalle
+    }
+    st.session_state.historico_general.append(registro)
+
+# --- PANEL LATERAL DE PERSONALIZACIÓN Y EDICIÓN ---
 st.sidebar.markdown("### ⚙️ Editor y Personalización Pro")
 st.sidebar.write("Personaliza textos, títulos y el logotipo institucional.")
 
@@ -304,10 +327,11 @@ if st.session_state.mostrar_aviso_legal:
         """)
         if st.button("Cerrar Aviso"):
             st.session_state.mostrar_aviso_legal = False
+            registrar_historico("Cierre de Aviso", "El usuario cerró el aviso legal inicial.")
             st.rerun()
     time.sleep(0.1)
 
-# --- MENÚ DE NAVEGACIÓN ADAPTABLE ---
+# --- MENÚ DE NAVEGACIÓN ADAPTABLE CON AUTO-GUARDADO DE HISTÓRICO ---
 st.markdown("### 🧭 Panel de Navegación Adaptable")
 menu_opciones = [
     "🏠 Inicio & Apps Oficiales", 
@@ -318,8 +342,12 @@ menu_opciones = [
     "📊 5. Estado de Cuenta", 
     "🛡️ 6. Panel Admin"
 ]
-menu = st.selectbox("Seleccione la Fase Operativa", menu_opciones, index=menu_opciones.index(st.session_state.paso_actual) if st.session_state.paso_actual in menu_opciones else 0)
-st.session_state.paso_actual = menu
+
+menu_seleccionado = st.selectbox("Seleccione la Fase Operativa", menu_opciones, index=menu_opciones.index(st.session_state.paso_actual) if st.session_state.paso_actual in menu_opciones else 0)
+
+if menu_seleccionado != st.session_state.paso_actual:
+    registrar_historico("Navegación", f"Cambio de sección a {menu_seleccionado}")
+    st.session_state.paso_actual = menu_seleccionado
 
 st.divider()
 
@@ -340,14 +368,17 @@ if menu == "🏠 Inicio & Apps Oficiales":
     with c_ios:
         st.markdown("🍏 **iPhone / iOS**")
         if st.button("App Store"):
+            registrar_historico("Acceso App Store", "Clic en enlace iOS")
             st.success("🔗 Redirigiendo a App Store...")
     with c_and:
         st.markdown("🤖 **Android**")
         if st.button("Google Play"):
+            registrar_historico("Acceso Google Play", "Clic en enlace Android")
             st.success("🔗 Redirigiendo a Google Play...")
     with c_web:
         st.markdown("💻 **Web / PWA**")
         if st.button("Abrir Web Online"):
+            registrar_historico("Acceso Web", "Navegación a KYC desde inicio")
             st.session_state.paso_actual = "📝 1. Registro KYC & Biometría"
             st.rerun()
 
@@ -365,6 +396,7 @@ if menu == "🏠 Inicio & Apps Oficiales":
     """)
     
     if st.button("👉 Comenzar Registro / Operación", type="primary"):
+        registrar_historico("Inicio de Operación", "Comenzar flujo de registro")
         st.session_state.paso_actual = "📝 1. Registro KYC & Biometría"
         st.rerun()
 
@@ -419,6 +451,7 @@ if menu == "📝 1. Registro KYC & Biometría":
                     "qrcode": qr_code_unique, "fecha_registro": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
                 st.session_state.cuentas_db[identificador_usuario] = []
+                registrar_historico("Registro Exitoso", f"Nuevo usuario registrado: {identificador_usuario}")
                 st.success(f"✅ ¡Registro exitoso! Código QR: **{qr_code_unique}**. Ya puede iniciar sesión.")
 
     with tab_log:
@@ -429,10 +462,12 @@ if menu == "📝 1. Registro KYC & Biometría":
             if log_usuario in st.session_state.usuarios_db:
                 if st.session_state.usuarios_db[log_usuario]["password_hash"] == hashlib.sha256(log_pass.encode()).hexdigest():
                     st.session_state.sesion_activa = log_usuario
+                    registrar_historico("Inicio de Sesión", f"Usuario logueado: {log_usuario}")
                     st.success("✅ ¡Bienvenido!")
                     st.session_state.paso_actual = "🏦 3. Enlace de Cuentas"
                     st.rerun()
                 else:
+                    registrar_historico("Fallo Login", f"Contraseña incorrecta para {log_usuario}")
                     st.error("Contraseña incorrecta.")
             else:
                 st.error("Usuario no encontrado.")
@@ -453,6 +488,7 @@ if menu == "🔑 2. Recuperación de Acceso":
         if rec_user in st.session_state.usuarios_db:
             token_temp = secrets.token_hex(4).upper()
             st.session_state.usuarios_db[rec_user]["token_rec"] = token_temp
+            registrar_historico("Generación Token", f"Token generado para {rec_user}")
             st.success(f"🔑 Token temporal generado: **{token_temp}**")
         else:
             st.error("Usuario no encontrado.")
@@ -466,6 +502,7 @@ if menu == "🔑 2. Recuperación de Acceso":
         if user_data and user_data.get("token_rec") == token_input.strip().upper():
             user_data["password_hash"] = hashlib.sha256(nueva_clave.encode()).hexdigest()
             user_data.pop("token_rec", None)
+            registrar_historico("Restablecimiento Clave", f"Clave actualizada para {rec_user}")
             st.success("✅ Contraseña actualizada con éxito.")
         else:
             st.error("Token inválido.")
@@ -511,6 +548,7 @@ if menu == "🏦 3. Enlace de Cuentas":
                         "fecha": datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
                     }
                     st.session_state.cuentas_db[user_email].append(nueva_cuenta)
+                    registrar_historico("Enlace Cuenta", f"Cuenta enlazada para {user_email}")
                     st.success("✅ Cuenta enlazada correctamente.")
             except Exception as e:
                 st.error(f"Error: {e}")
@@ -572,6 +610,7 @@ if menu == "💳 4. Orden de Transferencia":
                 )
                 
                 if resultado["estado"] in [EstadoOrden.RECHAZADA_CUMPLIMIENTO.value, EstadoOrden.ALERTA_OPERACION_SOSPECHOSA.value]:
+                    registrar_historico("Alerta AML / Bloqueo", f"Operación detenida: {resultado['motivo']}")
                     st.error(f"🛑 Alerta AML: {resultado['motivo']}")
                 else:
                     transaccion_registro = {
@@ -583,6 +622,7 @@ if menu == "💳 4. Orden de Transferencia":
                         "moneda": moneda, "estado": resultado["estado"]
                     }
                     st.session_state.transacciones_db.append(transaccion_registro)
+                    registrar_historico("Transferencia Exitosa", f"Orden ID {resultado['orden_id']} ejecutada por {monto} {moneda}")
                     st.success(f"✅ ¡Transferencia exitosa! Código único: **{resultado['orden_id']}**")
                     st.json(resultado)
 
@@ -615,8 +655,8 @@ if menu == "📊 5. Estado de Cuenta":
 if menu == "🛡️ 6. Panel Admin":
     st.markdown("""
     <div class="title-card">
-        <h2>6. Panel de Control Administrador</h2>
-        <p>Supervisión global de cumplimiento y gestión de riesgos.</p>
+        <h2>6. Panel de Control Administrador & Histórico Global</h2>
+        <p>Supervisión global de cumplimiento, auditoría y bitácora de cambios.</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -626,7 +666,15 @@ if menu == "🛡️ 6. Panel Admin":
         st.success("🔓 Acceso de Administrador Autorizado.")
         st.metric("Total Clientes Registrados", len(st.session_state.usuarios_db))
         st.metric("Total Transacciones Globales", len(st.session_state.transacciones_db))
+        
+        st.subheader("📋 Bitácora e Histórico de Cambios del Sistema")
+        if st.session_state.historico_general:
+            st.table(st.session_state.historico_general)
+        else:
+            st.info("No hay registros históricos aún.")
+            
         if st.session_state.transacciones_db:
+            st.subheader("Transacciones Globales")
             st.table(st.session_state.transacciones_db)
     elif clave_admin:
         st.error("❌ Clave incorrecta.")
