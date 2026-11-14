@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Pro - UI Profesional Corporativa, Gris Suave y Azul Ejecutivo, Mobile-First Responsive.
+# Versión 10/10 Pro - UI Profesional, Fondos Claros (Gris Suave), Texto Negro/Pizarra, Mobile-First Responsive.
 
 import streamlit as st
 import hashlib
@@ -18,26 +18,26 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILO VISUAL PROFESIONAL (SIN TONOS DORADOS, PALETA EJECUTIVA CLARA Y CÓMODA) ---
+# --- ESTILO VISUAL PROFESIONAL (FONDOS CLAROS, TEXTOS NEGROS/PIZARRA, CERO OSCURIDAD) ---
 st.markdown("""
 <style>
-/* Fondo general de la aplicación en gris suave corporativo */
+/* Fondo general de la aplicación en gris suave muy claro y agradable */
 .stApp {
     background-color: #F8FAFC;
-    color: #1E293B;
+    color: #0F172A;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Encabezados y títulos con tipografía ejecutiva */
+/* Encabezados y títulos con tipografía en negro profundo */
 h1, h2, h3, h4 {
-    color: #0F172A !important;
+    color: #020617 !important;
     font-weight: 700;
 }
 
 /* Tarjetas de ayuda y contenedores informativos limpios */
 .mini-help {
     background-color: #EDF2F7;
-    color: #334155;
+    color: #1E293B;
     padding: 10px 14px;
     border-radius: 8px;
     font-size: 13px;
@@ -46,7 +46,7 @@ h1, h2, h3, h4 {
     border-left: 4px solid #0284C7;
 }
 
-/* Botones ejecutivos profesionales */
+/* Botones ejecutivos profesionales en negro/pizarra claro */
 .stButton>button {
     background-color: #0F172A;
     color: #FFFFFF;
@@ -227,7 +227,7 @@ st.divider()
 # ================= 1. INICIO & APPS OFICIALES =================
 if menu == "🏠 Inicio & Apps Oficiales":
     st.header("Gobernanza Tecnológica y Multiplataforma")
-    st.write("Bienvenido al ecosistema seguro de **Baldera Santos y Asociados, SRL**. Interfaz optimizada en tonos neutros ejecutivos para máxima comodidad visual en celulares, tablets y laptops.")
+    st.write("Bienvenido al ecosistema seguro de **Baldera Santos y Asociados, SRL**. Interfaz limpia con fondos claros y excelente contraste visual en celulares, tablets y laptops.")
     
     st.info("📱 **DISPONIBLE EN LÍNEA Y TIENDAS DE APLICACIONES (PRODUCCIÓN 100/100)**")
     
@@ -261,7 +261,7 @@ if menu == "🏠 Inicio & Apps Oficiales":
 # ================= 2. REGISTRO KYC & ACCESO DUAL =================
 if menu == "📝 1. Registro KYC & Biometría":
     st.header("1. Registro de Cliente, Debida Diligencia (KYC) y CIUU")
-    st.write("Interfaz adaptada para celular con campos limpios y cómodos.")
+    st.write("Interfaz adaptada para celular con campos limpios y diseño luminoso.")
     
     tab_reg, tab_log = st.tabs(["Crear Cuenta", "Iniciar Sesión"])
     
@@ -490,7 +490,7 @@ if menu == "🛡️ 6. Panel Admin":
 # --- FOOTER LEGAL FIJO ---
 st.divider()
 st.markdown("""
-<div style="background-color: #E2E8F0; color: #1E293B; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #CBD5E1;">
+<div style="background-color: #E2E8F0; color: #0F172A; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #CBD5E1;">
     <b>⚖️ Baldera Santos y Asociados, SRL (BASA20)</b><br>
     Cumplimiento Normativo GAFI/FATF, Ley 155-17 y Ley 126-02.<br>
     Soporte Oficial: pedrobaldera2026@gmail.com | Producción Global 2026
