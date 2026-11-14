@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Pro - UI Profesional, Fondos Claros (Gris Suave), Texto Negro/Pizarra, Mobile-First Responsive.
+# Versión 10/10 Pro - UI Profesional Luminosa, Gris Suave, Tipografía Nítida, Mobile-First Responsive.
 
 import streamlit as st
 import hashlib
@@ -18,17 +18,17 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILO VISUAL PROFESIONAL (FONDOS CLAROS, TEXTOS NEGROS/PIZARRA, CERO OSCURIDAD) ---
+# --- ESTILO VISUAL PROFESIONAL LUMINOSO (FONDOS CLAROS, CERO DORADOS/OSCUROS, MÁXIMA ELEGANCIA) ---
 st.markdown("""
 <style>
-/* Fondo general de la aplicación en gris suave muy claro y agradable */
+/* Fondo general de la aplicación en gris suave muy claro y agradable a la vista */
 .stApp {
     background-color: #F8FAFC;
     color: #0F172A;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Encabezados y títulos con tipografía en negro profundo */
+/* Encabezados y títulos con tipografía en negro profundo nítido */
 h1, h2, h3, h4 {
     color: #020617 !important;
     font-weight: 700;
@@ -36,7 +36,7 @@ h1, h2, h3, h4 {
 
 /* Tarjetas de ayuda y contenedores informativos limpios */
 .mini-help {
-    background-color: #EDF2F7;
+    background-color: #F1F5F9;
     color: #1E293B;
     padding: 10px 14px;
     border-radius: 8px;
@@ -46,7 +46,7 @@ h1, h2, h3, h4 {
     border-left: 4px solid #0284C7;
 }
 
-/* Botones ejecutivos profesionales en negro/pizarra claro */
+/* Botones ejecutivos profesionales en negro/pizarra claro con excelente contraste */
 .stButton>button {
     background-color: #0F172A;
     color: #FFFFFF;
@@ -227,7 +227,7 @@ st.divider()
 # ================= 1. INICIO & APPS OFICIALES =================
 if menu == "🏠 Inicio & Apps Oficiales":
     st.header("Gobernanza Tecnológica y Multiplataforma")
-    st.write("Bienvenido al ecosistema seguro de **Baldera Santos y Asociados, SRL**. Interfaz limpia con fondos claros y excelente contraste visual en celulares, tablets y laptops.")
+    st.write("Bienvenido al ecosistema seguro de **Baldera Santos y Asociados, SRL**. Interfaz profesional luminosa de alta legibilidad en celulares, tablets y laptops.")
     
     st.info("📱 **DISPONIBLE EN LÍNEA Y TIENDAS DE APLICACIONES (PRODUCCIÓN 100/100)**")
     
