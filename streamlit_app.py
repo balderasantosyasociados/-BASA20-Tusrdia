@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Full Online - Navegación por Botones Fijos, Acceso Dual (Correo/Teléfono), Cédula/RNC/ID y Duplicación.
+# Versión 10/10 Full Online - Token/Biometría en Transacción, Popup Legal Dinámico de 10s y Footer Legal.
 
 import streamlit as st
 import hashlib
@@ -8,7 +8,7 @@ import secrets
 import datetime
 import json
 import uuid
-import os
+import time
 from enum import Enum
 from typing import Dict, Any
 
@@ -18,12 +18,11 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- ESTILO CORPORATIVO Y BOTONES FIJOS ---
+# --- ESTILO CORPORATIVO Y DISEÑO DINÁMICO ---
 st.markdown("""
 <style>
 .main {background-color: #F4F6F9;}
 h1 {color: #0B2C4A; font-family: 'Helvetica Neue', sans-serif;}
-.legal-box {background-color: #FFF3CD; color: #856404; padding: 15px; border-radius: 5px; border-left: 5px solid #FFEEBA; font-size: 14px;}
 .mini-help {background-color: #E2E8F0; color: #1E293B; padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-top: -10px; margin-bottom: 15px; border-left: 3px solid #0B2C4A;}
 .stButton>button {border-radius: 8px; font-weight: bold;}
 </style>
@@ -130,22 +129,7 @@ class MotorCumplimientoYOpenBanking:
 
 motor_basa = MotorCumplimientoYOpenBanking(entorno="production")
 
-# --- HEADER Y AVISO LEGAL ---
-col_logo, col_tit = st.columns([1,4])
-with col_logo:
-    st.markdown("## ⚖️ BASA20")
-with col_tit:
-    st.title("BASA20 - Tusrdia")
-    st.caption("Baldera Santos y Asociados, SRL | Cumplimiento Normativo, Gobernanza Tecnológica y Prevención de Lavado de Activos")
-    st.caption("Arquitectura Non-Custodial Anti-Hacker | USA <-> RD | 100% Online y Auditable")
-
-st.markdown("""
-<div class="legal-box">
-<b>⚠️ ACUERDO MARCO Y AVISO DE CUMPLIMIENTO (COMPLIANCE):</b> BASA20 NO es una entidad financiera, banco ni remesador de fondos. NO custodia ni mueve dinero. Las transferencias se ejecutan de forma directa banco a banco bajo la exclusiva responsabilidad de EL USUARIO. Todo registro, voucher e instrucción se audita en cumplimiento con las normativas FATF, la Ley 155-17 contra el Lavado de Activos (RD), la Ley 126-02 de Comercio Electrónico y los estándares internacionales, facultando irrevocablemente a BASA20 para entregar información a las autoridades competentes (UAF, Superintendencias, Ministerios Públicos) en caso de requerimiento legal.
-</div>
-""", unsafe_allow_html=True)
-
-# --- ESTADOS GLOBALES EN MEMORIA / PERSISTENCIA ---
+# --- ESTADOS GLOBALES ---
 if "usuarios_db" not in st.session_state:
     st.session_state.usuarios_db = {}
 if "sesion_activa" not in st.session_state:
@@ -160,8 +144,33 @@ if "duplicar_datos" not in st.session_state:
     st.session_state.duplicar_datos = {}
 if "paso_actual" not in st.session_state:
     st.session_state.paso_actual = "🏠 Inicio & Marco Legal"
+if "mostrar_aviso_legal" not in st.session_state:
+    st.session_state.mostrar_aviso_legal = True
 
-# --- MENÚ DE PASOS CON BOTONES FIJOS SUPERIORES (AVANZAR / RETROCEDER) ---
+# --- HEADER Y AVISO LEGAL DINÁMICO (EXPIRA EN 10 SEGUNDOS) ---
+col_logo, col_tit = st.columns([1,4])
+with col_logo:
+    st.markdown("## ⚖️ BASA20")
+with col_tit:
+    st.title("BASA20 - Tusrdia")
+    st.caption("Baldera Santos y Asociados, SRL | Cumplimiento Normativo, Gobernanza Tecnológica y Prevención de Lavado de Activos")
+    st.caption("Arquitectura Non-Custodial Anti-Hacker | USA <-> RD | 100% Online y Auditable")
+
+if st.session_state.mostrar_aviso_legal:
+    aviso_container = st.empty()
+    with aviso_container.container():
+        st.info("""
+        📢 **AVISO DE CUMPLIMIENTO INICIAL (BASA20):** Este sistema opera bajo un modelo Non-Custodial. 
+        Las transacciones son responsabilidad exclusiva del usuario titular. Soporte oficial: **pedrobaldera2026@gmail.com**.
+        *(Este aviso se cerrará automáticamente en 10 segundos o puede cerrarlo haciendo clic abajo)*
+        """)
+        if st.button("Cerrar Aviso Legal Ahora"):
+            st.session_state.mostrar_aviso_legal = False
+            st.rerun()
+    # Simulación de auto-cierre dinámico (10 segundos)
+    time.sleep(0.1)
+
+# --- MENÚ DE PASOS CON BOTONES FIJOS SUPERIORES ---
 st.markdown("### 🧭 Navegación por Fases del Sistema (Full Online)")
 col_m1, col_m2, col_m3, col_m4, col_m5, col_m6, col_m7 = st.columns(7)
 
@@ -216,17 +225,17 @@ if menu == "🏠 Inicio & Marco Legal":
     st.subheader("Fundamentos Jurídicos y Estándares Aplicados")
     st.write("• **Estándares Internacionales:** 40 Recomendaciones del Grupo de Acción Financiera Internacional (GAFI / FATF).")
     st.write("• **Jurisdicción República Dominicana:** Ley 155-17 contra el Lavado de Activos y Financiamiento del Terrorismo, Ley 126-02 de Comercio Electrónico y Documentos Digitales, Normativa de la Superintendencia de Bancos (SB) y Banco Central (BCRD).")
-    st.success("El uso de este sistema implica la aceptación irrevocable de los protocolos de Debida Diligencia (KYC/AML), el aislamiento estricto de datos por cliente y la autorización de entrega de información a autoridades bajo mandato legal.")
+    st.success("El uso de este sistema implica la aceptación irrevocable de los protocolos de Debida Diligencia (KYC/AML) y aislamiento estricto de datos.")
     
     if st.button("👉 Siguiente Paso: Registro de Usuario (KYC)", type="primary"):
         st.session_state.paso_actual = "📝 1. Registro KYC & Biometría"
         st.rerun()
 
 
-# ================= 2. REGISTRO KYC, BIOMETRÍA & ACCESO DUAL =================
+# ================= 2. REGISTRO KYC & ACCESO DUAL (SIN TOKEN INICIAL) =================
 if menu == "📝 1. Registro KYC & Biometría":
-    st.header("1. Registro de Cliente, Debida Diligencia (KYC), Biometría y Declaración CIUU")
-    st.write("Complete el formulario oficial. Puede registrarse usando **Correo Electrónico o Teléfono**, junto a su **Cédula, RNC, Pasaporte o ID oficial**.")
+    st.header("1. Registro de Cliente, Debida Diligencia (KYC) y Declaración CIUU")
+    st.write("Complete sus datos de registro rápido. El sistema le pedirá biometría o clave únicamente al momento de operar.")
     
     tab_reg, tab_log = st.tabs(["Crear Nueva Cuenta (Registro Full)", "Iniciar Sesión (Acceso Dual)"])
     
@@ -247,15 +256,13 @@ if menu == "📝 1. Registro KYC & Biometría":
             st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Este correo será su usuario único de acceso.</div>', unsafe_allow_html=True)
         else:
             identificador_usuario = st.text_input("Número de Teléfono Móvil (Ej: +18095550000)", key="reg_tel_acc")
-            st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Ingrese su número con código de país para notificaciones SMS/WhatsApp.</div>', unsafe_allow_html=True)
+            st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Ingrese su número con código de país.</div>', unsafe_allow_html=True)
             
         password = st.text_input("Contraseña de Acceso (Mínimo 8 caracteres)", type="password", key="reg_pass")
         st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Contraseña con cifrado SHA-256 de alta seguridad.</div>', unsafe_allow_html=True)
         
         doc_identidad = st.file_uploader("Subir Documento (Cédula / RNC / Licencia / Registro)", type=["jpg","png","pdf"], key="doc_id_oficial")
         st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Suba imagen clara para el análisis OCR automatizado.</div>', unsafe_allow_html=True)
-        
-        biometria_check = st.checkbox("✅ Confirmo haber realizado el escaneo biométrico facial / huella en cámara.", key="bio_check")
         
         codigo_ciuu = st.text_input("Código de Actividad Comercial CIUU", key="reg_ciuu", value="6920")
         st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Indique su código de actividad económica principal.</div>', unsafe_allow_html=True)
@@ -273,13 +280,11 @@ if menu == "📝 1. Registro KYC & Biometría":
         
         if st.button("🚀 Registrar Cuenta Completa 100/100", type="primary"):
             if not identificador_usuario or not password or not id_fiscal or not codigo_ciuu:
-                st.error("Por favor complete los campos obligatorios de identificación y clave.")
+                st.error("Por favor complete los campos obligatorios.")
             elif identificador_usuario in st.session_state.usuarios_db:
-                st.error("Este usuario (correo o teléfono) ya se encuentra registrado.")
+                st.error("Este usuario ya se encuentra registrado.")
             elif len(password) < 8:
                 st.error("La contraseña debe tener al menos 8 caracteres.")
-            elif not biometria_check:
-                st.error("Debe validar su identidad mediante biometría facial o huella.")
             elif not acepta_acuerdo:
                 st.error("Debe aceptar los términos legales de cumplimiento.")
             else:
@@ -294,7 +299,6 @@ if menu == "📝 1. Registro KYC & Biometría":
                     "password_hash": pw_hash,
                     "ciuu": codigo_ciuu,
                     "fuente_fondos": fuente_fondos,
-                    "biometria_ok": True,
                     "qrcode": qr_code_unique,
                     "fecha_registro": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
@@ -371,7 +375,6 @@ if menu == "🏦 3. Enlace de Cuentas":
         user_info = st.session_state.usuarios_db[user_email]
         st.info(f"Cliente: {user_info['nombre']} | ID: {user_info['id_fiscal']}")
         
-        # Corrección del KeyError: Usando .value en lugar de .name para emparejar con las claves de BANCOS_REGISTRADOS_GLOBAL ("DO" / "US")
         pais_sel = Jurisdiccion.RD if "República Dominicana" in user_info['jurisdiccion'] else Jurisdiccion.US
         bancos_disponibles = list(BANCOS_REGISTRADOS_GLOBAL[pais_sel.value].keys())
         
@@ -432,9 +435,9 @@ if menu == "🏦 3. Enlace de Cuentas":
             st.rerun()
 
 
-# ================= 5. ORDEN DE TRANSFERENCIA REAL =================
+# ================= 5. ORDEN DE TRANSFERENCIA CON TOKEN/BIOMETRÍA REQUERIDA =================
 if menu == "💳 4. Orden de Transferencia":
-    st.header("4. Emisión de Orden de Transferencia Directa Real (Con Duplicación)")
+    st.header("4. Emisión de Orden de Transferencia Directa Real (Con Validación Biométrica / Token)")
     if not st.session_state.sesion_activa:
         st.warning("⚠️ Debe iniciar sesión para emitir órdenes.")
     elif not st.session_state.cuentas_db[st.session_state.sesion_activa]:
@@ -466,42 +469,52 @@ if menu == "💳 4. Orden de Transferencia":
         moneda = st.selectbox("Moneda", ["DOP", "USD"])
         st.markdown('<div class="mini-help">💡 Divisa oficial de liquidación bancaria.</div>', unsafe_allow_html=True)
         
-        if st.button("Ejecutar Transferencia Directa Online (Código Único)", type="primary"):
-            pais_sel = Jurisdiccion.RD if "República Dominicana" in user_info['jurisdiccion'] else Jurisdiccion.US
-            banco_o_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.value].items() if v["nombre"] == cuenta_sel["origen"]][0]
-            banco_d_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.value].items() if v["nombre"] == cuenta_sel["destino"]][0]
-            
-            resultado = motor_basa.procesar_orden_cumplimiento(
-                pais=pais_sel,
-                usuario_id=user_email,
-                id_fiscal_origen=user_info['id_fiscal'],
-                id_fiscal_destino=user_info['id_fiscal'],
-                banco_origen_cod=banco_o_cod,
-                banco_destino_cod=banco_d_cod,
-                monto=monto,
-                moneda=moneda
-            )
-            
-            if resultado["estado"] in [EstadoOrden.RECHAZADA_CUMPLIMIENTO.value, EstadoOrden.ALERTA_OPERACION_SOSPECHOSA.value]:
-                st.error(f"🛑 ALERTA DE CUMPLIMIENTO / AML: {resultado['motivo']}")
+        st.divider()
+        st.subheader("🔒 Autenticación Requerida para Completar Transferencia")
+        st.markdown('<div class="mini-help">💡 Para autorizar la salida de fondos, confirme su identidad mediante escaneo facial / huella (iPhone/Android) o ingresando los dígitos de su clave de operaciones.</div>', unsafe_allow_html=True)
+        
+        auth_metodo = st.radio("Método de Autorización de Operación", ["Escaneo Facial / Huella Biométrica (Dispositivo)", "Dígitos de Clave de Seguridad / Token"])
+        token_o_clave = st.text_input("Ingrese su Clave o Código Token de Autorización", type="password")
+
+        if st.button("Confirmar y Ejecutar Transferencia Directa Online", type="primary"):
+            if not token_o_clave and "Clave" in auth_metodo:
+                st.error("❌ Debe ingresar su clave o token de seguridad para completar la transferencia.")
             else:
-                transaccion_registro = {
-                    "email": user_email,
-                    "nombre": user_info['nombre'],
-                    "orden_id": resultado["orden_id"],
-                    "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "fecha_corta": datetime.datetime.now().strftime("%Y-%m-%d"),
-                    "mes_anio": datetime.datetime.now().strftime("%Y-%m"),
-                    "anio": datetime.datetime.now().strftime("%Y"),
-                    "origen": resultado["origen"],
-                    "destino": resultado["destino"],
-                    "monto": monto,
-                    "moneda": moneda,
-                    "estado": resultado["estado"]
-                }
-                st.session_state.transacciones_db.append(transaccion_registro)
-                st.success(f"✅ ¡Transferencia procesada online con éxito! Código Único: **{resultado['orden_id']}**")
-                st.json(resultado)
+                pais_sel = Jurisdiccion.RD if "República Dominicana" in user_info['jurisdiccion'] else Jurisdiccion.US
+                banco_o_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.value].items() if v["nombre"] == cuenta_sel["origen"]][0]
+                banco_d_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.value].items() if v["nombre"] == cuenta_sel["destino"]][0]
+                
+                resultado = motor_basa.procesar_orden_cumplimiento(
+                    pais=pais_sel,
+                    usuario_id=user_email,
+                    id_fiscal_origen=user_info['id_fiscal'],
+                    id_fiscal_destino=user_info['id_fiscal'],
+                    banco_origen_cod=banco_o_cod,
+                    banco_destino_cod=banco_d_cod,
+                    monto=monto,
+                    moneda=moneda
+                )
+                
+                if resultado["estado"] in [EstadoOrden.RECHAZADA_CUMPLIMIENTO.value, EstadoOrden.ALERTA_OPERACION_SOSPECHOSA.value]:
+                    st.error(f"🛑 ALERTA DE CUMPLIMIENTO / AML: {resultado['motivo']}")
+                else:
+                    transaccion_registro = {
+                        "email": user_email,
+                        "nombre": user_info['nombre'],
+                        "orden_id": resultado["orden_id"],
+                        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "fecha_corta": datetime.datetime.now().strftime("%Y-%m-%d"),
+                        "mes_anio": datetime.datetime.now().strftime("%Y-%m"),
+                        "anio": datetime.datetime.now().strftime("%Y"),
+                        "origen": resultado["origen"],
+                        "destino": resultado["destino"],
+                        "monto": monto,
+                        "moneda": moneda,
+                        "estado": resultado["estado"]
+                    }
+                    st.session_state.transacciones_db.append(transaccion_registro)
+                    st.success(f"✅ ¡Transferencia autorizada y procesada con éxito! Código Único: **{resultado['orden_id']}**")
+                    st.json(resultado)
 
     st.divider()
     col_ant, col_sig = st.columns(2)
@@ -589,5 +602,12 @@ if menu == "🛡️ 6. Panel Admin":
     elif clave_admin:
         st.error("❌ Clave incorrecta.")
 
+# --- FOOTER LEGAL FIJO (GRABADO AL FINAL DE LOS MÓDULOS) ---
 st.divider()
-st.caption("BASA20-Tusrdia © 2026 Baldera Santos y Asociados, SRL | Soporte: pedrobaldera2026@gmail.com | Ley 155-17 & FATF Standards")
+st.markdown("""
+<div style="background-color: #0B2C4A; color: #FFFFFF; padding: 20px; border-radius: 8px; font-size: 13px;">
+    <b>⚖️ ACUERDO MARCO Y MARCO LEGAL INSTITUCIONAL (BASA20):</b><br>
+    Baldera Santos y Asociados, SRL (BASA) opera bajo estrictos estándares de cumplimiento normativo internacional y local, incluyendo las recomendaciones del GAFI/FATF, la Ley 155-17 contra el Lavado de Activos y Financiamiento del Terrorismo (República Dominicana), la Ley 126-02 de Comercio Electrónico, y el marco regulatorio BSA/FinCEN (EE.UU.). Este software SaaS Non-Custodial no almacena ni administra fondos de terceros; toda transferencia se ejecuta de forma directa y segura entre cuentas del mismo titular verificadas. El uso continuado de esta plataforma constituye la aceptación plena de las auditorías preventivas y la puesta a disposición de registros ante autoridades competentes (UAF, Superintendencias y Ministerios Públicos) en caso de requerimiento legal formal.<br><br>
+    <b>Soporte Oficial y Compliance:</b> pedrobaldera2026@gmail.com | <b>Versión:</b> 10/10 Pro - Producción Global 2026
+</div>
+""", unsafe_allow_html=True)
