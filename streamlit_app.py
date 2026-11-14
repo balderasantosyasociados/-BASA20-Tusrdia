@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Pro - UI Profesional Luminosa, Gris Suave, Tipografía Nítida, Mobile-First Responsive.
+# Versión 10/10 Pro - Editor Dinámico en Vivo, Carga de Logo Personalizado, UI Luminosa Profesional.
 
 import streamlit as st
 import hashlib
@@ -18,23 +18,18 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILO VISUAL PROFESIONAL LUMINOSO (FONDOS CLAROS, CERO DORADOS/OSCUROS, MÁXIMA ELEGANCIA) ---
+# --- ESTILO VISUAL PROFESIONAL LUMINOSO (FONDOS CLAROS, CERO OSCURIDAD) ---
 st.markdown("""
 <style>
-/* Fondo general de la aplicación en gris suave muy claro y agradable a la vista */
 .stApp {
     background-color: #F8FAFC;
     color: #0F172A;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
-
-/* Encabezados y títulos con tipografía en negro profundo nítido */
 h1, h2, h3, h4 {
     color: #020617 !important;
     font-weight: 700;
 }
-
-/* Tarjetas de ayuda y contenedores informativos limpios */
 .mini-help {
     background-color: #F1F5F9;
     color: #1E293B;
@@ -45,8 +40,6 @@ h1, h2, h3, h4 {
     margin-bottom: 15px;
     border-left: 4px solid #0284C7;
 }
-
-/* Botones ejecutivos profesionales en negro/pizarra claro con excelente contraste */
 .stButton>button {
     background-color: #0F172A;
     color: #FFFFFF;
@@ -61,8 +54,6 @@ h1, h2, h3, h4 {
     background-color: #334155;
     color: #FFFFFF;
 }
-
-/* Entradas de texto y selectores refinados */
 .stTextInput>div>div>input, .stSelectbox>div>div>select {
     background-color: #FFFFFF;
     color: #0F172A;
@@ -119,7 +110,7 @@ class MotorCumplimientoYOpenBanking:
         limpio_destino = id_fiscal_destino.replace("-", "").strip().upper()
         
         mismo_titular = (limpio_origen == limpio_destino) and (len(limpio_origen) >= 6)
-        alerta_ros = monto >= 10000.00  # Umbral preventivo FATF / FinCEN / UAF
+        alerta_ros = monto >= 10000.00
         
         return {
             "mismo_titular": mismo_titular,
@@ -168,7 +159,7 @@ class MotorCumplimientoYOpenBanking:
             "destino": banco_destino["nombre"],
             "importe": {"monto": round(monto, 2), "moneda": moneda.upper()},
             "estado": EstadoOrden.ENVIADA_A_BANCO.value,
-            "aviso_legal": "Trazabilidad inalterable registrada bajo Ley 155-17 y Ley 126-02. Faculta entrega a autoridades competentes sin restricción."
+            "aviso_legal": "Trazabilidad inalterable registrada bajo Ley 155-17 y Ley 126-02."
         }
 
 motor_basa = MotorCumplimientoYOpenBanking(entorno="production")
@@ -191,23 +182,44 @@ if "paso_actual" not in st.session_state:
 if "mostrar_aviso_legal" not in st.session_state:
     st.session_state.mostrar_aviso_legal = True
 
-# --- HEADER Y AVISO LEGAL DINÁMICO (EXPIRA EN 10 SEGUNDOS) ---
-st.markdown("## ⚖️ BASA20 - Tusrdia")
-st.caption("Baldera Santos y Asociados, SRL | Cumplimiento Normativo y Gobernanza Non-Custodial")
+# --- PANEL LATERAL DE PERSONALIZACIÓN Y EDICIÓN DE CAMPOS ---
+st.sidebar.markdown("### ⚙️ Editor y Personalización Full")
+st.sidebar.write("Modifica textos, títulos y carga tu propio logotipo institucional.")
 
+# Carga de Logo Personalizado
+logo_file = st.sidebar.file_uploader("📂 Cargar tu Logo Personalizado (PNG/JPG)", type=["png", "jpg", "jpeg"])
+
+st.sidebar.divider()
+st.sidebar.markdown("#### ✏️ Edición de Textos de la Página")
+custom_titulo = st.sidebar.text_input("Título Principal", value="BASA20 - Tusrdia")
+custom_subtitulo = st.sidebar.text_input("Subtítulo Institucional", value="Baldera Santos y Asociados, SRL | Cumplimiento Normativo y Gobernanza")
+custom_soporte = st.sidebar.text_input("Correo de Soporte", value="pedrobaldera2026@gmail.com")
+
+# --- HEADER CON LOGOTIPO PERSONALIZADO O ICONO ---
+col_logo, col_tit = st.columns([1, 4])
+with col_logo:
+    if logo_file is not None:
+        st.image(logo_file, width=80)
+    else:
+        st.markdown("## ⚖️")
+with col_tit:
+    st.markdown(f"## {custom_titulo}")
+    st.caption(custom_subtitulo)
+
+# --- AVISO LEGAL DINÁMICO ---
 if st.session_state.mostrar_aviso_legal:
     aviso_container = st.empty()
     with aviso_container.container():
-        st.info("""
+        st.info(f"""
         📢 **AVISO DE CUMPLIMIENTO INICIAL:** Sistema Non-Custodial activo 100/100 online. 
-        Soporte oficial: **pedrobaldera2026@gmail.com**. *(Este aviso se cierra automáticamente en 10s)*
+        Soporte oficial: **{custom_soporte}**. *(Este aviso se cierra automáticamente en 10s)*
         """)
         if st.button("Cerrar Aviso Ahora"):
             st.session_state.mostrar_aviso_legal = False
             st.rerun()
     time.sleep(0.1)
 
-# --- MENÚ DE PASOS ADAPTABLE A MÓVILES ---
+# --- MENÚ DE NAVEGACIÓN ADAPTABLE ---
 st.markdown("### 🧭 Panel de Navegación Adaptable")
 menu_opciones = [
     "🏠 Inicio & Apps Oficiales", 
@@ -223,11 +235,10 @@ st.session_state.paso_actual = menu
 
 st.divider()
 
-
 # ================= 1. INICIO & APPS OFICIALES =================
 if menu == "🏠 Inicio & Apps Oficiales":
     st.header("Gobernanza Tecnológica y Multiplataforma")
-    st.write("Bienvenido al ecosistema seguro de **Baldera Santos y Asociados, SRL**. Interfaz profesional luminosa de alta legibilidad en celulares, tablets y laptops.")
+    st.write(f"Bienvenido al ecosistema seguro. Soporte y cumplimiento coordinado a través de **{custom_soporte}**.")
     
     st.info("📱 **DISPONIBLE EN LÍNEA Y TIENDAS DE APLICACIONES (PRODUCCIÓN 100/100)**")
     
@@ -247,11 +258,10 @@ if menu == "🏠 Inicio & Apps Oficiales":
             st.rerun()
 
     st.subheader("Fundamentos Jurídicos y Estándares Aplicados")
-    format_text = """
+    st.markdown("""
     * **Estándares Internacionales:** GAFI / FATF 40 Recomendaciones.
     * **Jurisdicción RD:** Ley 155-17 contra el Lavado de Activos y Ley 126-02 de Comercio Electrónico.
-    """
-    st.markdown(format_text)
+    """)
     
     if st.button("👉 Comenzar Registro / Operación", type="primary"):
         st.session_state.paso_actual = "📝 1. Registro KYC & Biometría"
@@ -261,7 +271,6 @@ if menu == "🏠 Inicio & Apps Oficiales":
 # ================= 2. REGISTRO KYC & ACCESO DUAL =================
 if menu == "📝 1. Registro KYC & Biometría":
     st.header("1. Registro de Cliente, Debida Diligencia (KYC) y CIUU")
-    st.write("Interfaz adaptada para celular con campos limpios y diseño luminoso.")
     
     tab_reg, tab_log = st.tabs(["Crear Cuenta", "Iniciar Sesión"])
     
@@ -272,11 +281,10 @@ if menu == "📝 1. Registro KYC & Biometría":
         jurisdiccion = st.selectbox("Jurisdicción", ["República Dominicana (DO)", "Estados Unidos (US)"], key="reg_jur")
         tipo_id = st.selectbox("Tipo de Identificación", ["Cédula", "RNC", "Pasaporte", "ID Corporativo"], key="reg_tipo_id")
         id_fiscal = st.text_input("Número de Identificación", key="reg_idf")
-        st.markdown('<div class="mini-help">💡 Cédula, RNC o documento oficial sin guiones innecesarios.</div>', unsafe_allow_html=True)
         
         metodo_acceso = st.selectbox("Método de Acceso", ["Correo Electrónico", "Número de Teléfono Móvil"], key="reg_met_acc")
         identificador_usuario = st.text_input("Usuario (Correo o Teléfono)", key="reg_user_id")
-        st.markdown('<div class="mini-help">💡 Soporte oficial: pedrobaldera2026@gmail.com</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="mini-help">💡 Soporte oficial: {custom_soporte}</div>', unsafe_allow_html=True)
             
         password = st.text_input("Contraseña de Acceso (Mínimo 8 caracteres)", type="password", key="reg_pass")
         doc_identidad = st.file_uploader("Subir Documento (Cédula/RNC)", type=["jpg","png","pdf"], key="doc_id_oficial")
@@ -489,10 +497,10 @@ if menu == "🛡️ 6. Panel Admin":
 
 # --- FOOTER LEGAL FIJO ---
 st.divider()
-st.markdown("""
+st.markdown(f"""
 <div style="background-color: #E2E8F0; color: #0F172A; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #CBD5E1;">
     <b>⚖️ Baldera Santos y Asociados, SRL (BASA20)</b><br>
     Cumplimiento Normativo GAFI/FATF, Ley 155-17 y Ley 126-02.<br>
-    Soporte Oficial: pedrobaldera2026@gmail.com | Producción Global 2026
+    Soporte Oficial: {custom_soporte} | Producción Global 2026
 </div>
 """, unsafe_allow_html=True)
