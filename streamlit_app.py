@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Pro - UI Gris Suave, Mobile-First Responsive, Multiplataforma y Biometría Segura.
+# Versión 10/10 Pro - UI Profesional Corporativa, Gris Suave y Azul Ejecutivo, Mobile-First Responsive.
 
 import streamlit as st
 import hashlib
@@ -18,23 +18,23 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILO VISUAL PROFESIONAL: GRIS SUAVE Y CÓMODO PARA LA VISTA ---
+# --- ESTILO VISUAL PROFESIONAL (SIN TONOS DORADOS, PALETA EJECUTIVA CLARA Y CÓMODA) ---
 st.markdown("""
 <style>
-/* Fondo general de la aplicación en gris suave (evita brillos y fatiga visual) */
+/* Fondo general de la aplicación en gris suave corporativo */
 .stApp {
     background-color: #F8FAFC;
     color: #1E293B;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Encabezados y títulos con tipografía profesional */
+/* Encabezados y títulos con tipografía ejecutiva */
 h1, h2, h3, h4 {
     color: #0F172A !important;
     font-weight: 700;
 }
 
-/* Tarjetas y contenedores de ayuda con fondo gris claro y bordes refinados */
+/* Tarjetas de ayuda y contenedores informativos limpios */
 .mini-help {
     background-color: #EDF2F7;
     color: #334155;
@@ -43,12 +43,12 @@ h1, h2, h3, h4 {
     font-size: 13px;
     margin-top: -5px;
     margin-bottom: 15px;
-    border-left: 4px solid #3B82F6;
+    border-left: 4px solid #0284C7;
 }
 
-/* Botones adaptados para celular y laptop (cómodos al tacto) */
+/* Botones ejecutivos profesionales */
 .stButton>button {
-    background-color: #1E293B;
+    background-color: #0F172A;
     color: #FFFFFF;
     border-radius: 8px;
     font-weight: 600;
@@ -62,7 +62,7 @@ h1, h2, h3, h4 {
     color: #FFFFFF;
 }
 
-/* Cajas de texto y selectores limpios */
+/* Entradas de texto y selectores refinados */
 .stTextInput>div>div>input, .stSelectbox>div>div>select {
     background-color: #FFFFFF;
     color: #0F172A;
@@ -227,7 +227,7 @@ st.divider()
 # ================= 1. INICIO & APPS OFICIALES =================
 if menu == "🏠 Inicio & Apps Oficiales":
     st.header("Gobernanza Tecnológica y Multiplataforma")
-    st.write("Bienvenido al ecosistema seguro de **Baldera Santos y Asociados, SRL**. Interfaz optimizada en gris suave para máxima comodidad visual en celulares, tablets y laptops.")
+    st.write("Bienvenido al ecosistema seguro de **Baldera Santos y Asociados, SRL**. Interfaz optimizada en tonos neutros ejecutivos para máxima comodidad visual en celulares, tablets y laptops.")
     
     st.info("📱 **DISPONIBLE EN LÍNEA Y TIENDAS DE APLICACIONES (PRODUCCIÓN 100/100)**")
     
