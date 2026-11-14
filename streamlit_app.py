@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Full Online - Mobile-First Responsive, Multiplataforma (iOS/Android/Web) y Biometría Segura.
+# Versión 10/10 Pro - UI Gris Suave, Mobile-First Responsive, Multiplataforma y Biometría Segura.
 
 import streamlit as st
 import hashlib
@@ -15,18 +15,60 @@ from typing import Dict, Any
 st.set_page_config(
     page_title="BASA20-Tusrdia | Secure Compliance Hub", 
     page_icon="⚖️", 
-    layout="centered"  # Centrado para adaptarse óptimamente a celulares, tablets y laptops
+    layout="centered"
 )
 
-# --- ESTILO CORPORATIVO MOBILE-FIRST & RESPONSIVE ---
+# --- ESTILO VISUAL PROFESIONAL: GRIS SUAVE Y CÓMODO PARA LA VISTA ---
 st.markdown("""
 <style>
-.main {background-color: #F4F6F9;}
-h1 {color: #0B2C4A; font-family: 'Helvetica Neue', sans-serif; font-size: 1.8rem !important;}
-h2, h3 {color: #0B2C4A;}
-.mini-help {background-color: #E2E8F0; color: #1E293B; padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-top: -10px; margin-bottom: 15px; border-left: 3px solid #0B2C4A;}
-.stButton>button {border-radius: 8px; font-weight: bold; width: 100%; height: 48px;}
-.store-badge {background-color: #0B2C4A; color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: bold; margin: 5px 0;}
+/* Fondo general de la aplicación en gris suave (evita brillos y fatiga visual) */
+.stApp {
+    background-color: #F8FAFC;
+    color: #1E293B;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Encabezados y títulos con tipografía profesional */
+h1, h2, h3, h4 {
+    color: #0F172A !important;
+    font-weight: 700;
+}
+
+/* Tarjetas y contenedores de ayuda con fondo gris claro y bordes refinados */
+.mini-help {
+    background-color: #EDF2F7;
+    color: #334155;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: -5px;
+    margin-bottom: 15px;
+    border-left: 4px solid #3B82F6;
+}
+
+/* Botones adaptados para celular y laptop (cómodos al tacto) */
+.stButton>button {
+    background-color: #1E293B;
+    color: #FFFFFF;
+    border-radius: 8px;
+    font-weight: 600;
+    width: 100%;
+    height: 48px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.stButton>button:hover {
+    background-color: #334155;
+    color: #FFFFFF;
+}
+
+/* Cajas de texto y selectores limpios */
+.stTextInput>div>div>input, .stSelectbox>div>div>select {
+    background-color: #FFFFFF;
+    color: #0F172A;
+    border-radius: 8px;
+    border: 1px solid #CBD5E1;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -145,7 +187,7 @@ if "facturas_db" not in st.session_state:
 if "duplicar_datos" not in st.session_state:
     st.session_state.duplicar_datos = {}
 if "paso_actual" not in st.session_state:
-    st.session_state.paso_actual = "🏠 Inicio & Apps"
+    st.session_state.paso_actual = "🏠 Inicio & Apps Oficiales"
 if "mostrar_aviso_legal" not in st.session_state:
     st.session_state.mostrar_aviso_legal = True
 
@@ -165,7 +207,7 @@ if st.session_state.mostrar_aviso_legal:
             st.rerun()
     time.sleep(0.1)
 
-# --- MENÚ DE PASOS ADAPTABLE A MÓVILES (SELECTBOX / BOTONES RESPONSIVE) ---
+# --- MENÚ DE PASOS ADAPTABLE A MÓVILES ---
 st.markdown("### 🧭 Panel de Navegación Adaptable")
 menu_opciones = [
     "🏠 Inicio & Apps Oficiales", 
@@ -185,22 +227,22 @@ st.divider()
 # ================= 1. INICIO & APPS OFICIALES =================
 if menu == "🏠 Inicio & Apps Oficiales":
     st.header("Gobernanza Tecnológica y Multiplataforma")
-    st.write("Bienvenido al ecosistema seguro de **Baldera Santos y Asociados, SRL**. Diseñado 100% responsive para celulares, tablets y computadoras.")
+    st.write("Bienvenido al ecosistema seguro de **Baldera Santos y Asociados, SRL**. Interfaz optimizada en gris suave para máxima comodidad visual en celulares, tablets y laptops.")
     
     st.info("📱 **DISPONIBLE EN LÍNEA Y TIENDAS DE APLICACIONES (PRODUCCIÓN 100/100)**")
     
     c_ios, c_and, c_web = st.columns(3)
     with c_ios:
         st.markdown("🍏 **iPhone / iOS**")
-        if st.button("App Store Oficial"):
-            st.success("🔗 Redirigiendo a App Store (Producción iOS)...")
+        if st.button("App Store"):
+            st.success("🔗 Redirigiendo a App Store...")
     with c_and:
         st.markdown("🤖 **Android**")
-        if st.button("Google Play Oficial"):
-            st.success("🔗 Redirigiendo a Google Play (Producción Android)...")
+        if st.button("Google Play"):
+            st.success("🔗 Redirigiendo a Google Play...")
     with c_web:
         st.markdown("💻 **Web / PWA**")
-        if st.button("Ejecutar Web Online"):
+        if st.button("Abrir Web Online"):
             st.session_state.paso_actual = "📝 1. Registro KYC & Biometría"
             st.rerun()
 
@@ -219,13 +261,13 @@ if menu == "🏠 Inicio & Apps Oficiales":
 # ================= 2. REGISTRO KYC & ACCESO DUAL =================
 if menu == "📝 1. Registro KYC & Biometría":
     st.header("1. Registro de Cliente, Debida Diligencia (KYC) y CIUU")
-    st.write("Interfaz optimizada para celular. Ingrese con correo o teléfono y su documento oficial.")
+    st.write("Interfaz adaptada para celular con campos limpios y cómodos.")
     
     tab_reg, tab_log = st.tabs(["Crear Cuenta", "Iniciar Sesión"])
     
     with tab_reg:
         nombre = st.text_input("Nombre Completo / Razón Social", key="reg_nombre")
-        st.markdown('<div class="mini-help">💡 Ingrese su nombre tal como figura en su documento.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="mini-help">💡 Ingrese su nombre tal como figura en su documento oficial.</div>', unsafe_allow_html=True)
         
         jurisdiccion = st.selectbox("Jurisdicción", ["República Dominicana (DO)", "Estados Unidos (US)"], key="reg_jur")
         tipo_id = st.selectbox("Tipo de Identificación", ["Cédula", "RNC", "Pasaporte", "ID Corporativo"], key="reg_tipo_id")
@@ -448,7 +490,7 @@ if menu == "🛡️ 6. Panel Admin":
 # --- FOOTER LEGAL FIJO ---
 st.divider()
 st.markdown("""
-<div style="background-color: #0B2C4A; color: #FFFFFF; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center;">
+<div style="background-color: #E2E8F0; color: #1E293B; padding: 15px; border-radius: 8px; font-size: 12px; text-align: center; border: 1px solid #CBD5E1;">
     <b>⚖️ Baldera Santos y Asociados, SRL (BASA20)</b><br>
     Cumplimiento Normativo GAFI/FATF, Ley 155-17 y Ley 126-02.<br>
     Soporte Oficial: pedrobaldera2026@gmail.com | Producción Global 2026
