@@ -111,7 +111,6 @@ class MotorCumplimientoYOpenBanking:
                 "motivo": "Operación sujeta a revisión preventiva por umbral de debida diligencia ampliada (Compliance Hold / Alerta ROS)."
             }
 
-        # Generación de Código Único de Transacción (Datos Usuario + Fecha 6 Dígitos MMDDYY)
         fecha_6dig = datetime.datetime.now().strftime("%m%d%y")
         id_limpio = id_fiscal_origen.replace("-", "")[-4:]
         orden_id = f"TX-{id_limpio}-{fecha_6dig}-{secrets.token_hex(2).upper()}"
@@ -198,7 +197,6 @@ with col_m7:
 st.divider()
 menu = st.session_state.paso_actual
 
-# Sidebar informativo
 st.sidebar.write("**Firma Legal:** Baldera Santos y Asociados, SRL")
 st.sidebar.write("**Soporte Compliance:** pedrobaldera2026@gmail.com")
 st.sidebar.write("**Versión del Sistema:** 10/10 Pro - Producción Global 2026")
@@ -243,7 +241,6 @@ if menu == "📝 1. Registro KYC & Biometría":
         id_fiscal = st.text_input("Número de Identificación (Cédula / RNC / ID)", key="reg_idf")
         st.markdown('<div class="mini-help">💡 <b>Guía IA:</b> Ingrese el número sin espacios ni guiones restrictivos.</div>', unsafe_allow_html=True)
         
-        # Acceso dual: Correo o Teléfono
         metodo_acceso = st.selectbox("Identificador Principal de Acceso", ["Correo Electrónico", "Número de Teléfono Móvil"], key="reg_met_acc")
         if metodo_acceso == "Correo Electrónico":
             identificador_usuario = st.text_input("Correo Electrónico (Soporte: pedrobaldera2026@gmail.com)", key="reg_email")
@@ -374,16 +371,17 @@ if menu == "🏦 3. Enlace de Cuentas":
         user_info = st.session_state.usuarios_db[user_email]
         st.info(f"Cliente: {user_info['nombre']} | ID: {user_info['id_fiscal']}")
         
+        # Corrección del KeyError: Usando .value en lugar de .name para emparejar con las claves de BANCOS_REGISTRADOS_GLOBAL ("DO" / "US")
         pais_sel = Jurisdiccion.RD if "República Dominicana" in user_info['jurisdiccion'] else Jurisdiccion.US
-        bancos_disponibles = list(BANCOS_REGISTRADOS_GLOBAL[pais_sel.name].keys())
+        bancos_disponibles = list(BANCOS_REGISTRADOS_GLOBAL[pais_sel.value].keys())
         
-        banco_orig = st.selectbox("Banco Origen (Su Banco)", bancos_disponibles, format_func=lambda x: BANCOS_REGISTRADOS_GLOBAL[pais_sel.name][x]["nombre"])
+        banco_orig = st.selectbox("Banco Origen (Su Banco)", bancos_disponibles, format_func=lambda x: BANCOS_REGISTRADOS_GLOBAL[pais_sel.value][x]["nombre"])
         st.markdown('<div class="mini-help">💡 Seleccione su entidad bancaria de origen.</div>', unsafe_allow_html=True)
         
         cuenta_orig = st.text_input("Últimos 4 dígitos o token de cuenta origen", value=st.session_state.duplicar_datos.get("cta_orig", ""))
         st.markdown('<div class="mini-help">💡 Referencia segura de su cuenta bancaria.</div>', unsafe_allow_html=True)
         
-        banco_dest = st.selectbox("Banco Destino (Receptor / Préstamo)", bancos_disponibles, format_func=lambda x: BANCOS_REGISTRADOS_GLOBAL[pais_sel.name][x]["nombre"])
+        banco_dest = st.selectbox("Banco Destino (Receptor / Préstamo)", bancos_disponibles, format_func=lambda x: BANCOS_REGISTRADOS_GLOBAL[pais_sel.value][x]["nombre"])
         st.markdown('<div class="mini-help">💡 Seleccione el banco destino autorizado al mismo titular.</div>', unsafe_allow_html=True)
         
         cuenta_dest = st.text_input("Número de cuenta destino o referencia", value=st.session_state.duplicar_datos.get("cta_dest", ""))
@@ -445,7 +443,6 @@ if menu == "💳 4. Orden de Transferencia":
         user_email = st.session_state.sesion_activa
         user_info = st.session_state.usuarios_db[user_email]
         
-        # Duplicar desde transacciones previas
         historial_cliente = [t for t in st.session_state.transacciones_db if t["email"] == user_email]
         if historial_cliente:
             st.subheader("📋 Duplicar Registro de Operación Anterior")
@@ -471,8 +468,8 @@ if menu == "💳 4. Orden de Transferencia":
         
         if st.button("Ejecutar Transferencia Directa Online (Código Único)", type="primary"):
             pais_sel = Jurisdiccion.RD if "República Dominicana" in user_info['jurisdiccion'] else Jurisdiccion.US
-            banco_o_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.name].items() if v["nombre"] == cuenta_sel["origen"]][0]
-            banco_d_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.name].items() if v["nombre"] == cuenta_sel["destino"]][0]
+            banco_o_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.value].items() if v["nombre"] == cuenta_sel["origen"]][0]
+            banco_d_cod = [k for k, v in BANCOS_REGISTRADOS_GLOBAL[pais_sel.value].items() if v["nombre"] == cuenta_sel["destino"]][0]
             
             resultado = motor_basa.procesar_orden_cumplimiento(
                 pais=pais_sel,
