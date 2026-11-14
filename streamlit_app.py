@@ -1,6 +1,6 @@
 # BASA20-Tusrdia - Baldera Santos y Asociados, SRL
 # Sistema SaaS Legal Non-Custodial de Gestión, Trazabilidad, Gobernanza y Cumplimiento Normativo (AML/KYC/FATF)
-# Versión 10/10 Pro - UI Luminosa Profesional con Tarjetas de Título Modernas
+# Versión 10/10 Pro - UI 100% Luminosa, Cero Dorado, Forzada en Blanco Hueso, Negro e Índigo Profesional
 
 import streamlit as st
 import hashlib
@@ -17,7 +17,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILO VISUAL PROFESIONAL: TARJETAS DE TÍTULO, FONDOS LIMPIOS Y CONTRASTE PERFECTO ---
+# --- ESTILO VISUAL PRO: ELIMINACIÓN TOTAL DE DORADOS Y FORZADO DE ESTÉTICA CORPORATIVA ---
 st.markdown("""
 <style>
 /* Fondo general de la aplicación en blanco hueso elegante */
@@ -61,7 +61,7 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 600 !important;
 }
 
-/* Cajas de texto y selectores */
+/* Cajas de texto y selectores con fondo blanco impecable */
 .stTextInput>div>div>input, .stSelectbox>div>div>select, .stNumberInput>div>div>input {
     background-color: #FFFFFF !important;
     color: #111111 !important;
@@ -73,6 +73,33 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #FFFFFF !important;
     color: #111111 !important;
     border-color: #CBD5E1 !important;
+}
+
+/* ELIMINAR CUALQUIER TONO DORADO/AMARILLO EN PESTAÑAS (TABS) Y REEMPLAZAR POR ÍNDIGO/NEGRO */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+    background-color: #F1F5F9;
+    padding: 6px;
+    border-radius: 10px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 40px;
+    background-color: transparent !important;
+    border-radius: 8px !important;
+    color: #475569 !important;
+    font-weight: 600 !important;
+}
+
+.stTabs [aria-selected="true"] {
+    background-color: #FFFFFF !important;
+    color: #0F172A !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Línea indicadora de pestaña activa en azul ejecutivo (Cero Dorado) */
+.stTabs [data-baseweb="tab-highlight"] {
+    background-color: #2563EB !important;
 }
 
 /* Cajas de ayuda / info */
